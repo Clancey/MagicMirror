@@ -66,11 +66,6 @@ const CalendarFetcherUtils = {
 		const searchFromDate = pastLocalMoment.clone().subtract(Math.max(durationInMs, oneDayInMs), "milliseconds").toDate();
 		const searchToDate = futureLocalMoment.clone().add(1, "days").toDate();
 
-		// For all-day events, extend "until" to end of day to include the final occurrence
-		if (isFullDayEvent && rule.options?.until) {
-			rule.options.until = moment(rule.options.until).endOf("day").toDate();
-		}
-
 		const dates = rule.between(searchFromDate, searchToDate, true) || [];
 
 		// Convert dates to moments in the event's timezone.
@@ -313,7 +308,12 @@ const CalendarFetcherUtils = {
 			let recurringEventStartMoment = startMoment.clone().tz(CalendarFetcherUtils.getLocalTimezone());
 			let recurringEventEndMoment = recurringEventStartMoment.clone().add(durationMs, "ms");
 
-			const dateKey = recurringEventStartMoment.tz("UTC").format("YYYY-MM-DD");
+			// For full-day events, use local date components to match node-ical's getDateKey behavior
+			// For timed events, use UTC to match ISO string slice
+			const isFullDay = CalendarFetcherUtils.isFullDayEvent(event);
+			const dateKey = isFullDay
+				? recurringEventStartMoment.format("YYYY-MM-DD")
+				: recurringEventStartMoment.tz("UTC").format("YYYY-MM-DD");
 
 			// Check for overrides
 			if (curEvent.recurrences !== undefined) {
