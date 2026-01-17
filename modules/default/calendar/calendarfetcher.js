@@ -1,8 +1,9 @@
-const https = require("node:https");
 const ical = require("node-ical");
 const Log = require("logger");
+const { Agent } = require("undici");
 const CalendarFetcherUtils = require("./calendarfetcherutils");
 const { getUserAgent } = require("#server_functions");
+
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 const THIRTY_MINUTES = 30 * 60 * 1000;
@@ -74,7 +75,11 @@ class CalendarFetcher {
 		const options = { headers };
 
 		if (this.selfSignedCert) {
-			options.agent = new https.Agent({ rejectUnauthorized: false });
+			options.dispatcher = new Agent({
+				connect: {
+					rejectUnauthorized: false
+				}
+			});
 		}
 
 		if (this.auth) {
