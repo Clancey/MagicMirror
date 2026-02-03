@@ -160,3 +160,26 @@
 	text-transform: uppercase;
 	letter-spacing: 1px;
 }
+
+/* UI Hidden State */
+body.ui-hidden .region:not(.region.fullscreen_below):not(.region.fullscreen_above) {
+	opacity: 0 !important;
+	pointer-events: none !important;
+	transition: opacity 300ms ease-in-out;
+}
+
+body.ui-hidden .module .module-header {
+	opacity: 0 !important;
+}
+
+/* Ensure toggle wrapper stays visible */
+body.ui-hidden .touch-overlay-wrapper {
+	opacity: 1 !important;
+	pointer-events: auto !important;
+}
+
+/* Ensure overlay stays interactive when UI hidden */
+body.ui-hidden .touch-overlay {
+	opacity: 1 !important;
+	pointer-events: auto !important;
+}

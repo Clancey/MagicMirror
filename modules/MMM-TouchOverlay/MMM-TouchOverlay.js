@@ -16,6 +16,11 @@ Module.register("MMM-TouchOverlay", {
 		data: null
 	},
 
+	// UI visibility state
+	uiState: {
+		hidden: false
+	},
+
 	// Data storage for module content
 	newsItems: [],
 	calendarEvents: [],
@@ -257,5 +262,40 @@ Module.register("MMM-TouchOverlay", {
 
 	renderPhotoViewer: function () {
 		this.bodyElement.innerHTML = "<p>Photo viewer - to be implemented</p>";
+	},
+
+	// UI Toggle Methods
+	toggleUI: function () {
+		this.uiState.hidden = !this.uiState.hidden;
+
+		if (this.uiState.hidden) {
+			this.hideUI();
+		} else {
+			this.showUI();
+		}
+
+		this.sendNotification("TOUCH_UI_HIDDEN", { hidden: this.uiState.hidden });
+	},
+
+	hideUI: function () {
+		document.body.classList.add("ui-hidden");
+		this.updateToggleVisibility();
+	},
+
+	showUI: function () {
+		document.body.classList.remove("ui-hidden");
+		this.updateToggleVisibility();
+	},
+
+	updateToggleVisibility: function () {
+		if (this.uiToggleButton && this.uiShowButton) {
+			if (this.uiState.hidden) {
+				this.uiToggleButton.style.display = "none";
+				this.uiShowButton.style.display = "flex";
+			} else {
+				this.uiToggleButton.style.display = "flex";
+				this.uiShowButton.style.display = "none";
+			}
+		}
 	}
 });

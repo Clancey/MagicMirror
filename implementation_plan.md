@@ -39,9 +39,9 @@
 ### Hide UI Toggle
 - [?] Create toggle button DOM (48x48px touch target)
 - [?] Create "Show UI" button DOM for hidden state
-- [ ] Implement toggleUI() method
-- [ ] Implement hideUI() with CSS class body.ui-hidden
-- [ ] Implement showUI() to restore modules
+- [?] Implement toggleUI() method
+- [?] Implement hideUI() with CSS class body.ui-hidden
+- [?] Implement showUI() to restore modules
 - [ ] Add CSS for hiding regions (opacity 0, pointer-events none)
 - [ ] Add 300ms transition for hide/show
 - [ ] Position toggle button (configurable: bottom-right default)
