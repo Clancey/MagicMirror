@@ -10,6 +10,7 @@ Module.register("MMM-TouchOverlay", {
 		hideUITogglePosition: "bottom-right",
 		calendarDaysToShow: 14,
 		persistUIState: false, // Persist UI hidden state to localStorage
+		autoHideDelay: 60, // Auto-hide UI after X seconds of inactivity (0 to disable)
 		photoViewer: {
 			showMetadata: true,
 			slideshowPauseEnabled: true
@@ -26,6 +27,12 @@ Module.register("MMM-TouchOverlay", {
 	// UI visibility state
 	uiState: {
 		hidden: false
+	},
+
+	// Inactivity tracking
+	inactivityState: {
+		lastActivity: Date.now(),
+		timerId: null
 	},
 
 	// Data storage for module content
@@ -58,6 +65,7 @@ Module.register("MMM-TouchOverlay", {
 
 	start: function () {
 		Log.info("Starting module: " + this.name);
+		this.startInactivityTimer();
 	},
 
 	getDom: function () {
@@ -133,6 +141,7 @@ Module.register("MMM-TouchOverlay", {
 			case "MODULE_DOM_CREATED":
 				this.attachTouchHandlers();
 				this.attachKeyboardHandler();
+				this.attachActivityListeners();
 				this.restoreUIState();
 				break;
 			case "NEWS_FEED":
@@ -200,6 +209,17 @@ Module.register("MMM-TouchOverlay", {
 			if (e.key === "Escape" && this.overlayState.isOpen) {
 				this.closeOverlay();
 			}
+			this.recordActivity();
+		});
+	},
+
+	attachActivityListeners: function () {
+		const events = ["touchstart", "click", "mousemove"];
+
+		events.forEach(eventType => {
+			document.addEventListener(eventType, () => {
+				this.recordActivity();
+			}, { passive: true });
 		});
 	},
 
@@ -240,6 +260,8 @@ Module.register("MMM-TouchOverlay", {
 		if (wasPhoto) {
 			this.resumeSlideshow();
 		}
+
+		this.recordActivity();
 	},
 
 	showOverlay: function () {
@@ -887,6 +909,7 @@ Module.register("MMM-TouchOverlay", {
 			this.hideUI();
 		} else {
 			this.showUI();
+			this.recordActivity();
 		}
 
 		// Persist state to localStorage if enabled
@@ -939,6 +962,31 @@ Module.register("MMM-TouchOverlay", {
 				this.uiShowButton.style.display = "none";
 			}
 		}
+	},
+
+	startInactivityTimer: function () {
+		if (this.config.autoHideDelay <= 0) return;
+
+		this.stopInactivityTimer();
+		this.inactivityState.lastActivity = Date.now();
+
+		this.inactivityState.timerId = setInterval(() => {
+			const elapsed = (Date.now() - this.inactivityState.lastActivity) / 1000;
+			if (elapsed >= this.config.autoHideDelay && !this.uiState.hidden) {
+				this.toggleUI();
+			}
+		}, 1000);
+	},
+
+	stopInactivityTimer: function () {
+		if (this.inactivityState.timerId) {
+			clearInterval(this.inactivityState.timerId);
+			this.inactivityState.timerId = null;
+		}
+	},
+
+	recordActivity: function () {
+		this.inactivityState.lastActivity = Date.now();
 	},
 
 	// News navigation methods

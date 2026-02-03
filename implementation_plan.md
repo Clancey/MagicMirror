@@ -138,7 +138,7 @@
 ### Optional Enhancements
 - [?] Swipe navigation for news articles
 - [?] Swipe navigation for photos
-- [ ] Auto-hide UI after inactivity
+- [?] Auto-hide UI after inactivity
 - [ ] Loading state for weather data
 
 ## Bugs/Issues
