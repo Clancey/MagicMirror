@@ -74,6 +74,7 @@ Module.register("MMM-TouchOverlay", {
 		uiToggleButton.style.width = "48px";
 		uiToggleButton.style.height = "48px";
 		uiToggleButton.innerHTML = "<span class=\"toggle-icon\">👁</span>";
+		uiToggleButton.addEventListener("click", () => this.toggleUI());
 		wrapper.appendChild(uiToggleButton);
 
 		// Store reference for later updates
