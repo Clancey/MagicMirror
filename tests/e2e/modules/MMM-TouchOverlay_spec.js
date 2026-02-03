@@ -739,4 +739,279 @@ describe("MMM-TouchOverlay e2e tests", () => {
 			expect(isHidden).toBe(false);
 		});
 	});
+
+	describe("weather detail rendering", () => {
+		beforeAll(async () => {
+			await helpers.startApplication(TOUCHOVERLAY_CONFIG);
+			await helpers.getDocument();
+			page = helpers.getPage();
+			await page.waitForTimeout(1000);
+		});
+
+		beforeEach(async () => {
+			await ensureOverlayClosed(page);
+		});
+
+		it("should show loading state when no weather data", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.weatherData = null;
+						module.openOverlay("weather", null);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			const loading = page.locator(".weather-loading");
+			await expect(loading).toBeVisible();
+			await expect(page.locator(".weather-loading-text")).toContainText("Loading weather data");
+		});
+
+		it("should render current weather when data is available", async () => {
+			const mockWeatherData = {
+				currentWeather: {
+					temperature: 72,
+					feelsLike: 75,
+					humidity: 55,
+					windSpeed: 10,
+					weatherType: "day-sunny"
+				},
+				locationName: "Test City",
+				hourlyArray: [],
+				forecastArray: []
+			};
+
+			await page.evaluate((data) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.weatherData = data;
+						module.openOverlay("weather", data);
+						break;
+					}
+				}
+			}, mockWeatherData);
+			await page.waitForTimeout(400);
+
+			const weatherDetail = page.locator(".weather-detail");
+			await expect(weatherDetail).toBeVisible();
+
+			// Check location
+			await expect(page.locator(".weather-location")).toContainText("Test City");
+
+			// Check temperature
+			await expect(page.locator(".weather-temp-large")).toContainText("72");
+
+			// Check feels like
+			const feelsLike = page.locator(".weather-detail-item").filter({ hasText: "Feels like" });
+			await expect(feelsLike).toContainText("75");
+		});
+
+		it("should render hourly forecast limited to 12 hours", async () => {
+			const mockWeatherData = {
+				currentWeather: {
+					temperature: 72,
+					feelsLike: 75,
+					humidity: 55,
+					windSpeed: 10,
+					weatherType: "day-sunny"
+				},
+				locationName: "Test City",
+				hourlyArray: Array.from({ length: 24 }, (_, i) => ({
+					date: new Date(Date.now() + i * 3600000).toISOString(),
+					temperature: 70 + i,
+					weatherType: "day-sunny"
+				})),
+				forecastArray: []
+			};
+
+			await page.evaluate((data) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.weatherData = data;
+						module.openOverlay("weather", data);
+						break;
+					}
+				}
+			}, mockWeatherData);
+			await page.waitForTimeout(400);
+
+			// Should show hourly section
+			await expect(page.locator(".weather-hourly")).toBeVisible();
+
+			// Should be limited to 12 hours
+			const hourItems = page.locator(".weather-hour");
+			await expect(hourItems).toHaveCount(12);
+		});
+
+		it("should render daily forecast limited to 7 days", async () => {
+			const mockWeatherData = {
+				currentWeather: {
+					temperature: 72,
+					feelsLike: 75,
+					humidity: 55,
+					windSpeed: 10,
+					weatherType: "day-sunny"
+				},
+				locationName: "Test City",
+				hourlyArray: [],
+				forecastArray: Array.from({ length: 10 }, (_, i) => ({
+					date: new Date(Date.now() + i * 86400000).toISOString(),
+					maxTemperature: 80 + i,
+					minTemperature: 60 + i,
+					weatherType: "day-sunny"
+				}))
+			};
+
+			await page.evaluate((data) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.weatherData = data;
+						module.openOverlay("weather", data);
+						break;
+					}
+				}
+			}, mockWeatherData);
+			await page.waitForTimeout(400);
+
+			// Should show forecast section
+			await expect(page.locator(".weather-forecast")).toBeVisible();
+
+			// Should be limited to 7 days
+			const dayItems = page.locator(".weather-day");
+			await expect(dayItems).toHaveCount(7);
+		});
+
+		it("should display UV index when available", async () => {
+			const mockWeatherData = {
+				currentWeather: {
+					temperature: 72,
+					feelsLike: 75,
+					humidity: 55,
+					windSpeed: 10,
+					weatherType: "day-sunny",
+					uvIndex: 7
+				},
+				locationName: "Test City",
+				hourlyArray: [],
+				forecastArray: []
+			};
+
+			await page.evaluate((data) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.weatherData = data;
+						module.openOverlay("weather", data);
+						break;
+					}
+				}
+			}, mockWeatherData);
+			await page.waitForTimeout(400);
+
+			const uvItem = page.locator(".weather-detail-item").filter({ hasText: "UV Index" });
+			await expect(uvItem).toBeVisible();
+			await expect(uvItem).toContainText("7");
+		});
+
+		it("should display precipitation probability when available", async () => {
+			const mockWeatherData = {
+				currentWeather: {
+					temperature: 72,
+					feelsLike: 75,
+					humidity: 55,
+					windSpeed: 10,
+					weatherType: "day-cloudy",
+					precipitationProbability: 30
+				},
+				locationName: "Test City",
+				hourlyArray: [],
+				forecastArray: []
+			};
+
+			await page.evaluate((data) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.weatherData = data;
+						module.openOverlay("weather", data);
+						break;
+					}
+				}
+			}, mockWeatherData);
+			await page.waitForTimeout(400);
+
+			const precipItem = page.locator(".weather-detail-item").filter({ hasText: "Precip" });
+			await expect(precipItem).toBeVisible();
+			await expect(precipItem).toContainText("30%");
+		});
+
+		it("should display UV index even when value is 0", async () => {
+			const mockWeatherData = {
+				currentWeather: {
+					temperature: 72,
+					feelsLike: 75,
+					humidity: 55,
+					windSpeed: 10,
+					weatherType: "night-clear",
+					uvIndex: 0
+				},
+				locationName: "Test City",
+				hourlyArray: [],
+				forecastArray: []
+			};
+
+			await page.evaluate((data) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.weatherData = data;
+						module.openOverlay("weather", data);
+						break;
+					}
+				}
+			}, mockWeatherData);
+			await page.waitForTimeout(400);
+
+			const uvItem = page.locator(".weather-detail-item").filter({ hasText: "UV Index" });
+			await expect(uvItem).toBeVisible();
+			await expect(uvItem).toContainText("0");
+		});
+
+		it("should not display UV index when null", async () => {
+			const mockWeatherData = {
+				currentWeather: {
+					temperature: 72,
+					feelsLike: 75,
+					humidity: 55,
+					windSpeed: 10,
+					weatherType: "day-sunny"
+					// No uvIndex field
+				},
+				locationName: "Test City",
+				hourlyArray: [],
+				forecastArray: []
+			};
+
+			await page.evaluate((data) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.weatherData = data;
+						module.openOverlay("weather", data);
+						break;
+					}
+				}
+			}, mockWeatherData);
+			await page.waitForTimeout(400);
+
+			const uvItem = page.locator(".weather-detail-item").filter({ hasText: "UV Index" });
+			await expect(uvItem).toHaveCount(0);
+		});
+	});
 });
