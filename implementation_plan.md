@@ -33,8 +33,15 @@
 - [x] Attach touch handlers after MODULE_DOM_CREATED
 
 ## High Priority
+- [ ] Fix MMM-TouchOverlay calendar daysToShow initialization (use config after start)
+- [ ] Respect 12h/24h time format setting in calendar detail rendering
+- [ ] Fix news detail tap handling to open the tapped article (not always index 0)
+- [ ] Ensure weather detail view respects unit preferences and matches module icon style
 
 ## Medium Priority
+- [ ] Show precipitation/UV values when available even if zero
+- [ ] Add automated tests for MMM-TouchOverlay core flows (overlay open/close, notifications, hide UI toggle, news navigation, calendar grouping, weather rendering, photo viewer pause/resume/swipe)
+- [ ] Reconcile spec template requirement with inline rendering (update specs or add templates)
 
 ### Hide UI Toggle
 - [x] Create toggle button DOM (48x48px touch target)
@@ -148,6 +155,14 @@
 
 ## Bugs/Issues
 (none)
+
+## Code Quality Follow-ups
+- [ ] Address FIXME in js/main.js:476 (config passing in tests)
+- [ ] Address FIXME in js/app.js:34 (Hotfix PR)
+- [ ] Address FIXME in js/check_config.js:24 (refactor into core)
+- [ ] Address FIXME in modules/default/calendar/calendarfetcherutils.js:131 (facebook birthday fix)
+- [ ] Address TODO in modules/default/weather/providers/openweathermap.js:430 (hide doesn't exist)
+- [ ] Address TODO in modules/default/weather/providers/weatherflow.js:105 (precipitation unit conversion)
 
 ## Notes
 - Implementation order: overlay infrastructure → hide UI toggle → news → calendar → weather → photo
