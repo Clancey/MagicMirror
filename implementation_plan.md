@@ -19,7 +19,7 @@
 ### Bugs
 
 - [x] By default the UI should be visible. (verified - UI visibility state defaults to visible on initial load)
-- [?] Tapping on the MMM-ImmichTileSlideShow tiles opens the photo viewer. (handled immich tile div/video sources)
+- [x] Tapping on the MMM-ImmichTileSlideShow tiles opens the photo viewer. (handles immich-tile div/video sources)
 - [x] The MMM-ImmichTileSlideShow background should always be visible. The toggle is to hide the content over the top of it. (Fixed CSS selector: changed .region.fullscreen_below to .region.fullscreen.below)
 
 ### Module Setup (Foundation - Blocks All Other Work)
