@@ -50,6 +50,14 @@
 - [x] Add automated tests for MMM-TouchOverlay core flows (added tests for news navigation, defaults, photoData, calendarData, inactivityState)
 - [x] Reconcile spec template requirement with inline rendering (updated specs to show DOM structure instead of .njk templates)
 
+### Test Coverage
+
+- [ ] Add tests for overlay open/close flows and TOUCH_OVERLAY_OPEN/CLOSE notifications
+- [ ] Add tests for UI hide/show toggle behavior and persistUIState localStorage flow
+- [ ] Add tests for weather detail rendering (loading state, hourly/forecast bounds, precip/UV display)
+- [ ] Add tests for photo viewer flows (preload, pause/resume notifications, metadata rendering)
+- [ ] Add tests for inactivity auto-hide behavior
+
 ### Hide UI Toggle
 
 - [x] Create toggle button DOM (48x48px touch target)
@@ -181,6 +189,8 @@
 - [x] Address FIXME in modules/default/calendar/calendarfetcherutils.js:131 (clarified comment explaining Facebook birthday workaround)
 - [x] Address TODO in modules/default/weather/providers/openweathermap.js:430 (replaced broken hide() call with error logging)
 - [x] Address TODO in modules/default/weather/providers/weatherflow.js:105 (clarified comment - WeatherUtils handles conversion)
+- [ ] Resolve TODO comment in js/module.js:434 (configMerge documentation)
+- [ ] Remove/update stale placeholder comments in modules/MMM-TouchOverlay/MMM-TouchOverlay.js
 
 ## Notes
 
