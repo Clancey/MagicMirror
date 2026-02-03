@@ -49,7 +49,7 @@
 - [x] Show precipitation/UV values when available even if zero
 - [x] Add automated tests for MMM-TouchOverlay core flows (added tests for news navigation, defaults, photoData, calendarData, inactivityState)
 - [x] Reconcile spec template requirement with inline rendering (updated specs to show DOM structure instead of .njk templates)
-- [?] Align hide UI toggle configuration with spec (updated specs/hide-ui-toggle.md to document flat config structure matching implementation)
+- [x] Align hide UI toggle configuration with spec (updated specs/hide-ui-toggle.md to document flat config structure matching implementation)
 - [ ] Decide metric wind unit behavior (km/h per spec vs m/s per MagicMirror) and align implementation/specs
 
 ### Test Coverage
