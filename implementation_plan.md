@@ -54,9 +54,9 @@
 
 - [x] Add tests for overlay open/close flows and TOUCH_OVERLAY_OPEN/CLOSE notifications
 - [x] Add tests for UI hide/show toggle behavior and persistUIState localStorage flow
-- [?] Add tests for weather detail rendering (loading state, hourly/forecast bounds, precip/UV display)
-- [?] Add tests for photo viewer flows (preload, pause/resume notifications, metadata rendering)
-- [?] Add tests for inactivity auto-hide behavior (timer start/stop, recordActivity, auto-hide after timeout)
+- [x] Add tests for weather detail rendering (loading state, hourly/forecast bounds, precip/UV display)
+- [x] Add tests for photo viewer flows (preload, pause/resume notifications, metadata rendering)
+- [x] Add tests for inactivity auto-hide behavior (timer start/stop, recordActivity, auto-hide after timeout)
 
 ### Hide UI Toggle
 
@@ -158,8 +158,8 @@
 - [x] Add configuration for hideUIToggle position
   - [x] Add configuration for photoViewer.showMetadata
 - [x] Add configuration for calendar daysToShow
-- [?] Document module configuration in README
-- [?] Add MMM-TouchOverlay module to config/config.js with default configuration
+- [x] Document module configuration in README
+- [x] Add MMM-TouchOverlay module to config/config.js with default configuration
 - [B] Test on touch-capable display (blocked: no touch hardware available in this environment)
 
 ### Accessibility
