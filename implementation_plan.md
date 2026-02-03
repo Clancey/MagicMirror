@@ -17,7 +17,7 @@
 - [x] Create modules/MMM-TouchOverlay directory structure
 - [x] Create MMM-TouchOverlay.js with module registration and defaults
 - [x] Create MMM-TouchOverlay.css base file
-- [x] Create templates directory and overlay.njk base template
+- [x] Create module structure (templates directory later removed - using inline rendering)
 
 ### Touch Overlay Component (Core Infrastructure)
 - [x] Implement overlay DOM structure (backdrop, content area, close button)
@@ -121,8 +121,8 @@
 ## Low Priority
 
 ### Code Quality
-- [ ] Integrate Nunjucks templates for rendering - currently using template literals instead of .njk files
-- [ ] Remove or integrate unused .njk template files (overlay.njk, news-detail.njk, calendar-detail.njk, weather-detail.njk, photo-viewer.njk)
+- [x] Decided to keep inline template literals (simpler, working well, no Nunjucks dependency needed)
+- [?] Remove unused .njk template files and templates directory (removed: overlay.njk, news-detail.njk, calendar-detail.njk, weather-detail.njk, photo-viewer.njk)
 
 ### Configuration & Polish
 - [x] Add configuration options for animationSpeed, backdropOpacity
@@ -146,7 +146,7 @@
 - [x] Loading state for weather data
 
 ## Bugs/Issues
-- Templates in templates/ directory exist but are never used - JS uses inline template literals instead of Nunjucks templates
+(none)
 
 ## Notes
 - Implementation order: overlay infrastructure → hide UI toggle → news → calendar → weather → photo
