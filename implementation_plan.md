@@ -37,70 +37,70 @@
 ## Medium Priority
 
 ### Hide UI Toggle
-- [?] Create toggle button DOM (48x48px touch target)
-- [?] Create "Show UI" button DOM for hidden state
-- [?] Implement toggleUI() method
-- [?] Implement hideUI() with CSS class body.ui-hidden
-- [?] Implement showUI() to restore modules
-- [?] Add CSS for hiding regions (opacity 0, pointer-events none)
-- [?] Add 300ms transition for hide/show
-- [?] Position toggle button (configurable: bottom-right default)
-- [?] Send TOUCH_UI_HIDDEN notification on toggle
+- [x] Create toggle button DOM (48x48px touch target)
+- [x] Create "Show UI" button DOM for hidden state
+- [x] Implement toggleUI() method
+- [x] Implement hideUI() with CSS class body.ui-hidden
+- [x] Implement showUI() to restore modules
+- [x] Add CSS for hiding regions (opacity 0, pointer-events none)
+- [x] Add 300ms transition for hide/show
+- [x] Position toggle button (configurable: bottom-right default)
+- [x] Send TOUCH_UI_HIDDEN notification on toggle
 - [ ] Optional: persist state to localStorage
 
 ### News Detail View
-- [?] Listen for NEWS_FEED notification and store items
-- [?] Implement handleNewsfeedTap() touch handler
-- [?] Create templates/news-detail.njk template
-- [?] Implement renderNewsDetail() method
-- [?] Display headline in large bold text
-- [?] Display source name and relative timestamp
-- [?] Display summary/description if available
-- [?] Display URL indicator (non-clickable)
-- [?] Add prev/next navigation buttons (48x48px)
-- [?] Implement navigateNews(direction) method
-- [?] Show position indicator (X / Y)
-- [?] Disable nav buttons at list boundaries
-- [?] Add news detail CSS styles
+- [x] Listen for NEWS_FEED notification and store items
+- [x] Implement handleNewsfeedTap() touch handler
+- [x] Create templates/news-detail.njk template
+- [x] Implement renderNewsDetail() method
+- [x] Display headline in large bold text
+- [x] Display source name and relative timestamp
+- [x] Display summary/description if available
+- [x] Display URL indicator (non-clickable)
+- [x] Add prev/next navigation buttons (48x48px)
+- [x] Implement navigateNews(direction) method
+- [x] Show position indicator (X / Y)
+- [x] Disable nav buttons at list boundaries
+- [x] Add news detail CSS styles
 
 ### Calendar Detail View
-- [?] Listen for CALENDAR_EVENTS notification and store events
-- [?] Implement handleCalendarTap() touch handler
-- [?] Create templates/calendar-detail.njk template
-- [?] Implement groupEventsByDate() method
-- [?] Implement formatEvent() method
-- [?] Implement renderCalendarDetail() method
-- [?] Display events grouped by date with headers
-- [?] Highlight "Today" and "Tomorrow" headers
-- [?] Display event title, start/end times
-- [?] Display "All Day" badge for full-day events
-- [?] Display location when available
-- [?] Display calendar name when available
-- [?] Show event color coding (border-left)
-- [?] Dim past events (earlier today)
-- [?] Add vertical scrolling for long lists
-- [?] Show "No upcoming events" empty state
-- [?] Add calendar detail CSS styles
+- [x] Listen for CALENDAR_EVENTS notification and store events
+- [x] Implement handleCalendarTap() touch handler
+- [x] Create templates/calendar-detail.njk template
+- [x] Implement groupEventsByDate() method
+- [x] Implement formatEvent() method
+- [x] Implement renderCalendarDetail() method
+- [x] Display events grouped by date with headers
+- [x] Highlight "Today" and "Tomorrow" headers
+- [x] Display event title, start/end times
+- [x] Display "All Day" badge for full-day events
+- [x] Display location when available
+- [x] Display calendar name when available
+- [x] Show event color coding (border-left)
+- [x] Dim past events (earlier today)
+- [x] Add vertical scrolling for long lists
+- [x] Show "No upcoming events" empty state
+- [x] Add calendar detail CSS styles
 
 ### Weather Detail View
-- [?] Listen for WEATHER_UPDATED notification and store data
-- [?] Implement handleWeatherTap() touch handler
-- [?] Create templates/weather-detail.njk template
-- [?] Implement renderWeatherDetail() method
-- [?] Implement getWeatherIcon() mapping method
-- [?] Implement formatTemp() for unit conversion
-- [?] Implement formatWind() for unit conversion
-- [?] Display current temperature prominently
-- [?] Display feels-like temperature
-- [?] Display humidity percentage
-- [?] Display wind speed with appropriate units
-- [?] Display weather icon for current conditions
-- [?] Display hourly forecast (next 12 hours)
-- [?] Add horizontal scroll for hourly forecast
-- [?] Display daily forecast (7 days) with high/low
-- [?] Display precipitation probability when available
-- [?] Display UV index when available
-- [?] Add weather detail CSS styles
+- [x] Listen for WEATHER_UPDATED notification and store data
+- [x] Implement handleWeatherTap() touch handler
+- [x] Create templates/weather-detail.njk template
+- [x] Implement renderWeatherDetail() method
+- [x] Implement getWeatherIcon() mapping method
+- [x] Implement formatTemp() for unit conversion
+- [x] Implement formatWind() for unit conversion
+- [x] Display current temperature prominently
+- [x] Display feels-like temperature
+- [x] Display humidity percentage
+- [x] Display wind speed with appropriate units
+- [x] Display weather icon for current conditions
+- [x] Display hourly forecast (next 12 hours)
+- [x] Add horizontal scroll for hourly forecast
+- [x] Display daily forecast (7 days) with high/low
+- [x] Display precipitation probability when available
+- [x] Display UV index when available
+- [x] Add weather detail CSS styles
 
 ### Photo Viewer
 - [ ] Investigate MMM-ImmichTileSlideShow DOM structure
@@ -121,19 +121,19 @@
 ## Low Priority
 
 ### Configuration & Polish
-- [?] Add configuration options for animationSpeed, backdropOpacity
-- [?] Add configuration for hideUIToggle position
+- [x] Add configuration options for animationSpeed, backdropOpacity
+- [x] Add configuration for hideUIToggle position
 - [ ] Add configuration for photoViewer.showMetadata
-- [?] Add configuration for calendar daysToShow
-- [?] Document module configuration in README
+- [x] Add configuration for calendar daysToShow
+- [x] Document module configuration in README
 - [ ] Test on touch-capable display
 
 ### Accessibility
-- [?] Ensure all interactive elements have aria-labels
-- [?] Ensure close button has visible focus state
-- [?] Verify high contrast text on overlays
-- [?] Verify no color-only indicators
-- [?] Test keyboard navigation (Tab, Escape)
+- [x] Ensure all interactive elements have aria-labels
+- [x] Ensure close button has visible focus state
+- [x] Verify high contrast text on overlays
+- [x] Verify no color-only indicators
+- [x] Test keyboard navigation (Tab, Escape)
 
 ### Optional Enhancements
 - [ ] Swipe navigation for news articles
