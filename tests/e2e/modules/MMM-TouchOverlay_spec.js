@@ -174,6 +174,247 @@ describe("MMM-TouchOverlay e2e tests", () => {
 		});
 	});
 
+	describe("news navigation buttons", () => {
+		beforeAll(async () => {
+			await helpers.startApplication(TOUCHOVERLAY_CONFIG);
+			await helpers.getDocument();
+			page = helpers.getPage();
+			await page.waitForTimeout(1000);
+		});
+
+		beforeEach(async () => {
+			await ensureOverlayClosed(page);
+		});
+
+		it("should disable prev button at first article", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.newsData.items = [
+							{ title: "Article 1", pubdate: new Date().toISOString() },
+							{ title: "Article 2", pubdate: new Date().toISOString() },
+							{ title: "Article 3", pubdate: new Date().toISOString() }
+						];
+						module.newsData.currentIndex = 0;
+						module.openOverlay("news", module.newsData);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			const prevBtn = page.locator(".news-prev");
+			await expect(prevBtn).toBeDisabled();
+		});
+
+		it("should enable next button at first article", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.newsData.items = [
+							{ title: "Article 1", pubdate: new Date().toISOString() },
+							{ title: "Article 2", pubdate: new Date().toISOString() },
+							{ title: "Article 3", pubdate: new Date().toISOString() }
+						];
+						module.newsData.currentIndex = 0;
+						module.openOverlay("news", module.newsData);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			const nextBtn = page.locator(".news-next");
+			await expect(nextBtn).toBeEnabled();
+		});
+
+		it("should disable next button at last article", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.newsData.items = [
+							{ title: "Article 1", pubdate: new Date().toISOString() },
+							{ title: "Article 2", pubdate: new Date().toISOString() },
+							{ title: "Article 3", pubdate: new Date().toISOString() }
+						];
+						module.newsData.currentIndex = 2;
+						module.openOverlay("news", module.newsData);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			const nextBtn = page.locator(".news-next");
+			await expect(nextBtn).toBeDisabled();
+		});
+
+		it("should enable prev button at last article", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.newsData.items = [
+							{ title: "Article 1", pubdate: new Date().toISOString() },
+							{ title: "Article 2", pubdate: new Date().toISOString() },
+							{ title: "Article 3", pubdate: new Date().toISOString() }
+						];
+						module.newsData.currentIndex = 2;
+						module.openOverlay("news", module.newsData);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			const prevBtn = page.locator(".news-prev");
+			await expect(prevBtn).toBeEnabled();
+		});
+
+		it("should enable both buttons at middle article", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.newsData.items = [
+							{ title: "Article 1", pubdate: new Date().toISOString() },
+							{ title: "Article 2", pubdate: new Date().toISOString() },
+							{ title: "Article 3", pubdate: new Date().toISOString() }
+						];
+						module.newsData.currentIndex = 1;
+						module.openOverlay("news", module.newsData);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			const prevBtn = page.locator(".news-prev");
+			const nextBtn = page.locator(".news-next");
+			await expect(prevBtn).toBeEnabled();
+			await expect(nextBtn).toBeEnabled();
+		});
+
+		it("should navigate to next article when next button clicked", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.newsData.items = [
+							{ title: "First Article", pubdate: new Date().toISOString() },
+							{ title: "Second Article", pubdate: new Date().toISOString() }
+						];
+						module.newsData.currentIndex = 0;
+						module.openOverlay("news", module.newsData);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			// Verify showing first article
+			const headline = page.locator(".news-headline");
+			await expect(headline).toContainText("First Article");
+
+			// Click next
+			const nextBtn = page.locator(".news-next");
+			await nextBtn.click();
+			await page.waitForTimeout(200);
+
+			// Should now show second article
+			await expect(headline).toContainText("Second Article");
+		});
+
+		it("should navigate to previous article when prev button clicked", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.newsData.items = [
+							{ title: "First Article", pubdate: new Date().toISOString() },
+							{ title: "Second Article", pubdate: new Date().toISOString() }
+						];
+						module.newsData.currentIndex = 1;
+						module.openOverlay("news", module.newsData);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			// Verify showing second article
+			const headline = page.locator(".news-headline");
+			await expect(headline).toContainText("Second Article");
+
+			// Click prev
+			const prevBtn = page.locator(".news-prev");
+			await prevBtn.click();
+			await page.waitForTimeout(200);
+
+			// Should now show first article
+			await expect(headline).toContainText("First Article");
+		});
+
+		it("should update position indicator after navigation", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.newsData.items = [
+							{ title: "First Article", pubdate: new Date().toISOString() },
+							{ title: "Second Article", pubdate: new Date().toISOString() },
+							{ title: "Third Article", pubdate: new Date().toISOString() }
+						];
+						module.newsData.currentIndex = 0;
+						module.openOverlay("news", module.newsData);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			// Check initial position
+			const position = page.locator(".news-position");
+			await expect(position).toContainText("1 / 3");
+
+			// Navigate to next
+			const nextBtn = page.locator(".news-next");
+			await nextBtn.click();
+			await page.waitForTimeout(200);
+
+			// Position should update
+			await expect(position).toContainText("2 / 3");
+		});
+
+		it("navigation buttons should be at least 48x48px", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.newsData.items = [
+							{ title: "Article 1", pubdate: new Date().toISOString() },
+							{ title: "Article 2", pubdate: new Date().toISOString() }
+						];
+						module.newsData.currentIndex = 0;
+						module.openOverlay("news", module.newsData);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			const nextBtn = page.locator(".news-next");
+			await expect(nextBtn).toBeVisible();
+			const box = await nextBtn.boundingBox();
+			expect(box).not.toBeNull();
+			expect(box.width).toBeGreaterThanOrEqual(48);
+			expect(box.height).toBeGreaterThanOrEqual(48);
+		});
+	});
+
 	describe("overlay content rendering", () => {
 		beforeAll(async () => {
 			await helpers.startApplication(TOUCHOVERLAY_CONFIG);
@@ -1015,6 +1256,342 @@ describe("MMM-TouchOverlay e2e tests", () => {
 		});
 	});
 
+	describe("calendar detail overlay rendering", () => {
+		beforeAll(async () => {
+			await helpers.startApplication(TOUCHOVERLAY_CONFIG);
+			await helpers.getDocument();
+			page = helpers.getPage();
+			await page.waitForTimeout(1000);
+		});
+
+		beforeEach(async () => {
+			await ensureOverlayClosed(page);
+			// Reset calendar data
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = [];
+						break;
+					}
+				}
+			});
+		});
+
+		it("should show empty state when no calendar events", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = [];
+						module.openOverlay("calendar", []);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			const emptyState = page.locator(".calendar-empty");
+			await expect(emptyState).toBeVisible();
+			await expect(emptyState).toContainText("No upcoming events");
+		});
+
+		it("should render calendar detail with events grouped by date", async () => {
+			const today = new Date();
+			const tomorrow = new Date(today);
+			tomorrow.setDate(tomorrow.getDate() + 1);
+
+			const mockEvents = [
+				{
+					title: "Event Today",
+					startDate: today.getTime(),
+					endDate: today.getTime() + 3600000,
+					fullDayEvent: false
+				},
+				{
+					title: "Event Tomorrow",
+					startDate: tomorrow.getTime(),
+					endDate: tomorrow.getTime() + 3600000,
+					fullDayEvent: false
+				}
+			];
+
+			await page.evaluate((events) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = events;
+						module.openOverlay("calendar", events);
+						break;
+					}
+				}
+			}, mockEvents);
+			await page.waitForTimeout(400);
+
+			const calendarDetail = page.locator(".calendar-detail");
+			await expect(calendarDetail).toBeVisible();
+
+			// Should have date headers
+			const dateHeaders = page.locator(".calendar-date-header");
+			await expect(dateHeaders).toHaveCount(2);
+		});
+
+		it("should highlight Today header", async () => {
+			const today = new Date();
+			today.setHours(today.getHours() + 1);
+
+			const mockEvents = [
+				{
+					title: "Event Today",
+					startDate: today.getTime(),
+					endDate: today.getTime() + 3600000,
+					fullDayEvent: false
+				}
+			];
+
+			await page.evaluate((events) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = events;
+						module.openOverlay("calendar", events);
+						break;
+					}
+				}
+			}, mockEvents);
+			await page.waitForTimeout(400);
+
+			const todayHeader = page.locator(".calendar-date-header.today");
+			await expect(todayHeader).toBeVisible();
+			await expect(todayHeader).toContainText("Today");
+		});
+
+		it("should highlight Tomorrow header", async () => {
+			const tomorrow = new Date();
+			tomorrow.setDate(tomorrow.getDate() + 1);
+
+			const mockEvents = [
+				{
+					title: "Event Tomorrow",
+					startDate: tomorrow.getTime(),
+					endDate: tomorrow.getTime() + 3600000,
+					fullDayEvent: false
+				}
+			];
+
+			await page.evaluate((events) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = events;
+						module.openOverlay("calendar", events);
+						break;
+					}
+				}
+			}, mockEvents);
+			await page.waitForTimeout(400);
+
+			const tomorrowHeader = page.locator(".calendar-date-header.tomorrow");
+			await expect(tomorrowHeader).toBeVisible();
+			await expect(tomorrowHeader).toContainText("Tomorrow");
+		});
+
+		it("should display All Day badge for full-day events", async () => {
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+			const todayEnd = new Date(today);
+			todayEnd.setHours(23, 59, 59, 999);
+
+			const mockEvents = [
+				{
+					title: "All Day Event",
+					startDate: today.getTime(),
+					endDate: todayEnd.getTime(),
+					fullDayEvent: true
+				}
+			];
+
+			await page.evaluate((events) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = events;
+						module.openOverlay("calendar", events);
+						break;
+					}
+				}
+			}, mockEvents);
+			await page.waitForTimeout(400);
+
+			const allDayBadge = page.locator(".all-day-badge");
+			await expect(allDayBadge).toBeVisible();
+			await expect(allDayBadge).toContainText("All Day");
+		});
+
+		it("should display event title", async () => {
+			const today = new Date();
+			today.setHours(today.getHours() + 1);
+
+			const mockEvents = [
+				{
+					title: "Important Meeting",
+					startDate: today.getTime(),
+					endDate: today.getTime() + 3600000,
+					fullDayEvent: false
+				}
+			];
+
+			await page.evaluate((events) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = events;
+						module.openOverlay("calendar", events);
+						break;
+					}
+				}
+			}, mockEvents);
+			await page.waitForTimeout(400);
+
+			const eventTitle = page.locator(".event-title");
+			await expect(eventTitle).toContainText("Important Meeting");
+		});
+
+		it("should display event location when available", async () => {
+			const today = new Date();
+			today.setHours(today.getHours() + 1);
+
+			const mockEvents = [
+				{
+					title: "Meeting",
+					startDate: today.getTime(),
+					endDate: today.getTime() + 3600000,
+					fullDayEvent: false,
+					location: "Conference Room A"
+				}
+			];
+
+			await page.evaluate((events) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = events;
+						module.openOverlay("calendar", events);
+						break;
+					}
+				}
+			}, mockEvents);
+			await page.waitForTimeout(400);
+
+			const location = page.locator(".event-location");
+			await expect(location).toBeVisible();
+			await expect(location).toContainText("Conference Room A");
+		});
+
+		it("should display calendar name when available", async () => {
+			const today = new Date();
+			today.setHours(today.getHours() + 1);
+
+			const mockEvents = [
+				{
+					title: "Meeting",
+					startDate: today.getTime(),
+					endDate: today.getTime() + 3600000,
+					fullDayEvent: false,
+					calendarName: "Work Calendar"
+				}
+			];
+
+			await page.evaluate((events) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = events;
+						module.openOverlay("calendar", events);
+						break;
+					}
+				}
+			}, mockEvents);
+			await page.waitForTimeout(400);
+
+			const calendarName = page.locator(".event-calendar");
+			await expect(calendarName).toBeVisible();
+			await expect(calendarName).toContainText("Work Calendar");
+		});
+
+		it("should apply color coding via border-left", async () => {
+			const today = new Date();
+			today.setHours(today.getHours() + 1);
+
+			const mockEvents = [
+				{
+					title: "Colored Event",
+					startDate: today.getTime(),
+					endDate: today.getTime() + 3600000,
+					fullDayEvent: false,
+					color: "#ff0000"
+				}
+			];
+
+			await page.evaluate((events) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = events;
+						module.openOverlay("calendar", events);
+						break;
+					}
+				}
+			}, mockEvents);
+			await page.waitForTimeout(400);
+
+			const event = page.locator(".calendar-event");
+			// Check the inline style includes border-left-color
+			const style = await event.getAttribute("style");
+			expect(style).toContain("border-left-color");
+			expect(style).toContain("#ff0000");
+		});
+
+		it("should dim past events", async () => {
+			// Create an event that already ended today
+			const pastTime = new Date();
+			pastTime.setHours(pastTime.getHours() - 3);
+			const pastEnd = new Date(pastTime);
+			pastEnd.setHours(pastEnd.getHours() + 1);
+
+			const mockEvents = [
+				{
+					title: "Past Event",
+					startDate: pastTime.getTime(),
+					endDate: pastEnd.getTime(),
+					fullDayEvent: false
+				}
+			];
+
+			await page.evaluate((events) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = events;
+						module.openOverlay("calendar", events);
+						break;
+					}
+				}
+			}, mockEvents);
+			await page.waitForTimeout(400);
+
+			const pastEvent = page.locator(".calendar-event.past");
+			await expect(pastEvent).toBeVisible();
+		});
+
+		it("should have vertical scrolling for calendar list", async () => {
+			const calendarDetail = page.locator(".calendar-detail");
+			// The CSS sets max-height and overflow-y: auto
+			const overflowY = await calendarDetail.evaluate((el) => getComputedStyle(el).overflowY);
+			expect(overflowY).toBe("auto");
+		});
+	});
+
 	describe("photo viewer flows", () => {
 		beforeAll(async () => {
 			await helpers.startApplication(TOUCHOVERLAY_CONFIG);
@@ -1365,6 +1942,91 @@ describe("MMM-TouchOverlay e2e tests", () => {
 
 			const overlay = page.locator(OVERLAY_SELECTOR);
 			await expect(overlay).toHaveAttribute("data-content", "photo");
+		});
+	});
+
+	describe("Escape key closes overlay", () => {
+		beforeAll(async () => {
+			await helpers.startApplication(TOUCHOVERLAY_CONFIG);
+			await helpers.getDocument();
+			page = helpers.getPage();
+			await page.waitForTimeout(1000);
+		});
+
+		beforeEach(async () => {
+			await ensureOverlayClosed(page);
+		});
+
+		it("should close overlay when Escape key is pressed", async () => {
+			await openNewsOverlay(page);
+
+			// Verify overlay is open
+			const overlay = page.locator(OVERLAY_SELECTOR);
+			await expect(overlay).toHaveAttribute("data-visible", "true");
+
+			// Press Escape key
+			await page.keyboard.press("Escape");
+			await page.waitForTimeout(400);
+
+			// Verify overlay is closed
+			await expect(overlay).toHaveAttribute("data-visible", "false");
+		});
+
+		it("should not error when Escape pressed with overlay already closed", async () => {
+			// Ensure overlay is closed
+			const overlay = page.locator(OVERLAY_SELECTOR);
+			await expect(overlay).toHaveAttribute("data-visible", "false");
+
+			// Press Escape - should not throw error
+			await page.keyboard.press("Escape");
+			await page.waitForTimeout(100);
+
+			// Should still be closed
+			await expect(overlay).toHaveAttribute("data-visible", "false");
+		});
+
+		it("should send TOUCH_OVERLAY_CLOSE notification when Escape closes overlay", async () => {
+			// Set up notification listener
+			await page.evaluate(() => {
+				window.testNotifications = [];
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						if (!module._sendNotificationWrapped) {
+							const originalSendNotification = module.sendNotification.bind(module);
+							module.sendNotification = (notification, payload) => {
+								window.testNotifications.push({ notification, payload });
+								originalSendNotification(notification, payload);
+							};
+							module._sendNotificationWrapped = true;
+						}
+						break;
+					}
+				}
+			});
+
+			// Clear notifications and open overlay
+			await page.evaluate(() => {
+				window.testNotifications = [];
+			});
+
+			await openNewsOverlay(page);
+
+			// Clear notifications after open
+			await page.evaluate(() => {
+				window.testNotifications = [];
+			});
+
+			// Press Escape
+			await page.keyboard.press("Escape");
+			await page.waitForTimeout(400);
+
+			// Verify TOUCH_OVERLAY_CLOSE was sent
+			const result = await page.evaluate(() => {
+				return window.testNotifications.find((n) => n.notification === "TOUCH_OVERLAY_CLOSE");
+			});
+
+			expect(result).toBeDefined();
 		});
 	});
 

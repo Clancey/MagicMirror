@@ -59,9 +59,9 @@
 - [x] Add tests for weather detail rendering (loading state, hourly/forecast bounds, precip/UV display)
 - [x] Add tests for photo viewer flows (preload, pause/resume notifications, metadata rendering)
 - [x] Add tests for inactivity auto-hide behavior (timer start/stop, recordActivity, auto-hide after timeout)
-- [ ] Add e2e tests for calendar detail overlay rendering (grouped dates, empty state, past event dimming)
-- [ ] Add e2e tests for Escape key closing overlay
-- [ ] Add e2e tests for news navigation buttons (prev/next disable at boundaries) and swipe navigation
+- [?] Add e2e tests for calendar detail overlay rendering (grouped dates, empty state, past event dimming)
+- [?] Add e2e tests for Escape key closing overlay
+- [?] Add e2e tests for news navigation buttons (prev/next disable at boundaries) and swipe navigation
 
 ### Hide UI Toggle
 
