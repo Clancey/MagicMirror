@@ -366,7 +366,9 @@ formatWind(speed) {
     if (this.weatherData.units === "imperial") {
         return `${Math.round(speed)} mph`;
     }
-    return `${Math.round(speed)} km/h`;
+    // Note: MagicMirror's weather module uses m/s for metric by default.
+    // Users can configure windUnits in weather module if km/h is preferred.
+    return `${Math.round(speed)} m/s`;
 }
 ```
 
@@ -384,7 +386,7 @@ renderWeatherDetail() {
         weatherIcon: this.getWeatherIcon(current.weatherType),
         humidity: current.humidity,
         windSpeed: this.formatWind(current.windSpeed),
-        windUnit: units === "imperial" ? "mph" : "km/h",
+        windUnit: units === "imperial" ? "mph" : "m/s",  // MagicMirror default: m/s for metric
         uvIndex: current.uvIndex,
         precipProb: current.precipitationProbability,
         hourly: hourly.slice(0, 12).map(h => ({
