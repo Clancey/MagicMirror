@@ -31,8 +31,8 @@ if (process.env.MM_CONFIG_FILE) {
 	global.configuration_file = process.env.MM_CONFIG_FILE.replace(`${global.root_path}/`, "");
 }
 
-// FIXME: Hotfix Pull Request
-// https://github.com/MagicMirrorOrg/MagicMirror/pull/673
+// Port override via environment variable, added for Docker support
+// See: https://github.com/MagicMirrorOrg/MagicMirror/pull/673
 if (process.env.MM_PORT) {
 	global.mmPort = process.env.MM_PORT;
 }

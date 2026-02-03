@@ -11,25 +11,16 @@ const Log = require("logger");
 
 const rootPath = path.resolve(`${__dirname}/../`);
 const Utils = require(`${rootPath}/js/utils.js`);
+const { getConfigFilePath } = require(`${rootPath}/js/server_functions.js`);
 
 const linter = new Linter({ configType: "flat" });
 const ajv = new Ajv();
 
 /**
- * Returns a string with path of configuration file.
- * Check if set by environment variable MM_CONFIG_FILE
- * @returns {string} path and filename of the config file
- */
-function getConfigFile () {
-	// FIXME: This function should be in core. Do you want refactor me ;) ?, be good!
-	return path.resolve(process.env.MM_CONFIG_FILE || `${rootPath}/config/config.js`);
-}
-
-/**
  * Checks the config file using eslint.
  */
 function checkConfigFile () {
-	const configFileName = getConfigFile();
+	const configFileName = getConfigFilePath();
 
 	// Check if file exists and is accessible
 	try {
