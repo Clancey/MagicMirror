@@ -40,15 +40,15 @@
 ## High Priority
 
 - [x] Fix MMM-TouchOverlay calendar daysToShow initialization (use config after start)
-- [?] Respect 12h/24h time format setting in calendar detail rendering
-- [?] Fix news detail tap handling to open the tapped article (not always index 0)
-- [?] Ensure weather detail view respects unit preferences and matches module icon style
+- [x] Respect 12h/24h time format setting in calendar detail rendering
+- [x] Fix news detail tap handling to open the tapped article (not always index 0)
+- [x] Ensure weather detail view respects unit preferences and matches module icon style
 
 ## Medium Priority
 
-- [?] Show precipitation/UV values when available even if zero
-- [?] Add automated tests for MMM-TouchOverlay core flows (overlay open/close, notifications, hide UI toggle, news navigation, calendar grouping, weather rendering, photo viewer pause/resume/swipe)
-- [?] Reconcile spec template requirement with inline rendering (update specs or add templates)
+- [x] Show precipitation/UV values when available even if zero
+- [ ] Add automated tests for MMM-TouchOverlay core flows (overlay open/close, notifications, hide UI toggle, news navigation, calendar grouping, weather rendering, photo viewer pause/resume/swipe) (not implemented)
+- [ ] Reconcile spec template requirement with inline rendering (update specs or add templates) (specs still reference templates)
 
 ### Hide UI Toggle
 
