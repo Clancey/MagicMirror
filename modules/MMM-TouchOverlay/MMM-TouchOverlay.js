@@ -77,10 +77,20 @@ Module.register("MMM-TouchOverlay", {
 		uiToggleButton.addEventListener("click", () => this.toggleUI());
 		wrapper.appendChild(uiToggleButton);
 
+		// Show UI button (visible only when UI is hidden)
+		const uiShowButton = document.createElement("button");
+		uiShowButton.className = "touch-ui-show";
+		uiShowButton.setAttribute("aria-label", "Show interface");
+		uiShowButton.innerHTML = "<span class=\"show-icon\">👁</span><span class=\"show-text\">UI</span>";
+		uiShowButton.style.display = "none";
+		uiShowButton.addEventListener("click", () => this.toggleUI());
+		wrapper.appendChild(uiShowButton);
+
 		// Store reference for later updates
 		this.overlayElement = overlay;
 		this.bodyElement = body;
 		this.uiToggleButton = uiToggleButton;
+		this.uiShowButton = uiShowButton;
 
 		return wrapper;
 	},

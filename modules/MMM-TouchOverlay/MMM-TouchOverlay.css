@@ -125,3 +125,38 @@
 .touch-ui-toggle:focus {
 	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
 }
+
+/* Show UI Button (when hidden) */
+.touch-ui-show {
+	position: fixed;
+	bottom: 24px;
+	right: 24px;
+	height: 36px;
+	padding: 0 16px;
+	background: rgba(0, 0, 0, 0.3);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 18px;
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 12px;
+	cursor: pointer;
+	display: none;
+	align-items: center;
+	gap: 8px;
+	z-index: 9998;
+	transition: all 200ms ease;
+}
+
+.touch-ui-show:hover,
+.touch-ui-show:focus {
+	background: rgba(0, 0, 0, 0.5);
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.show-icon {
+	font-size: 14px;
+}
+
+.show-text {
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
