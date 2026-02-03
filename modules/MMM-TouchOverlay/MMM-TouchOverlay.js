@@ -312,10 +312,36 @@ Module.register("MMM-TouchOverlay", {
 
 	// Placeholder handlers - to be implemented in detail view tasks
 	handleNewsfeedTap: function (e) {
-		if (this.newsItems.length > 0) {
-			this.newsData.currentIndex = 0;
-			this.openOverlay("news", this.newsData);
+		if (this.newsItems.length === 0) return;
+
+		let tappedIndex = 0;
+
+		// Check if tapped on a list item (showAsList mode)
+		const listItem = e.target.closest(".newsfeed-list li");
+		if (listItem) {
+			const listItems = listItem.parentElement.querySelectorAll("li");
+			tappedIndex = Array.from(listItems).indexOf(listItem);
+		} else {
+			// Single item mode - try to match displayed title to find index
+			const titleEl = e.target.closest(".newsfeed")?.querySelector(".newsfeed-title");
+			if (titleEl) {
+				const displayedTitle = titleEl.textContent.trim();
+				const matchedIndex = this.newsItems.findIndex(item =>
+					item.title && item.title.trim() === displayedTitle
+				);
+				if (matchedIndex !== -1) {
+					tappedIndex = matchedIndex;
+				}
+			}
 		}
+
+		// Ensure index is valid
+		if (tappedIndex < 0 || tappedIndex >= this.newsItems.length) {
+			tappedIndex = 0;
+		}
+
+		this.newsData.currentIndex = tappedIndex;
+		this.openOverlay("news", this.newsData);
 	},
 
 	handleWeatherTap: function (e) {
