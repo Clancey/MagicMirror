@@ -9,6 +9,7 @@ Module.register("MMM-TouchOverlay", {
 		closeButtonSize: 48,
 		hideUITogglePosition: "bottom-right",
 		calendarDaysToShow: 14,
+		timeFormat: config.timeFormat, // Use global MagicMirror time format (12 or 24)
 		persistUIState: false, // Persist UI hidden state to localStorage
 		autoHideDelay: 60, // Auto-hide UI after X seconds of inactivity (0 to disable)
 		photoViewer: {
@@ -666,7 +667,15 @@ Module.register("MMM-TouchOverlay", {
 		const timeFormat = (date) => {
 			const hours = date.getHours();
 			const minutes = date.getMinutes().toString().padStart(2, "0");
-			return `${hours}:${minutes}`;
+
+			// Use 12h or 24h format based on config
+			if (this.config.timeFormat === 12) {
+				const hour12 = hours % 12 || 12;
+				const period = hours < 12 ? "AM" : "PM";
+				return `${hour12}:${minutes} ${period}`;
+			}
+			// 24-hour format
+			return `${hours.toString().padStart(2, "0")}:${minutes}`;
 		};
 
 		return {

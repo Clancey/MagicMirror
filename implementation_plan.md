@@ -34,7 +34,7 @@
 
 ## High Priority
 - [x] Fix MMM-TouchOverlay calendar daysToShow initialization (use config after start)
-- [ ] Respect 12h/24h time format setting in calendar detail rendering
+- [?] Respect 12h/24h time format setting in calendar detail rendering
 - [ ] Fix news detail tap handling to open the tapped article (not always index 0)
 - [ ] Ensure weather detail view respects unit preferences and matches module icon style
 
