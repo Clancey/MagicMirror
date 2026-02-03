@@ -14,23 +14,23 @@
 (Tasks here have been implemented but need another agent to verify)
 
 ### Module Setup (Foundation - Blocks All Other Work)
-- [?] Create modules/MMM-TouchOverlay directory structure
-- [?] Create MMM-TouchOverlay.js with module registration and defaults
-- [?] Create MMM-TouchOverlay.css base file
-- [?] Create templates directory and overlay.njk base template
+- [x] Create modules/MMM-TouchOverlay directory structure
+- [x] Create MMM-TouchOverlay.js with module registration and defaults
+- [x] Create MMM-TouchOverlay.css base file
+- [x] Create templates directory and overlay.njk base template
 
 ### Touch Overlay Component (Core Infrastructure)
-- [?] Implement overlay DOM structure (backdrop, content area, close button)
-- [?] Implement openOverlay(contentType, data) method
-- [?] Implement closeOverlay() method with notification
-- [?] Implement backdrop click-to-close handler
-- [?] Implement close button click handler
-- [?] Implement Escape key to close overlay
-- [?] Add 200ms fade animation for overlay open/close
-- [?] Ensure only one overlay can be open at a time
-- [?] Send TOUCH_OVERLAY_OPEN notification on open
-- [?] Send TOUCH_OVERLAY_CLOSE notification on close
-- [?] Attach touch handlers after MODULE_DOM_CREATED
+- [x] Implement overlay DOM structure (backdrop, content area, close button)
+- [x] Implement openOverlay(contentType, data) method
+- [x] Implement closeOverlay() method with notification
+- [x] Implement backdrop click-to-close handler
+- [x] Implement close button click handler
+- [x] Implement Escape key to close overlay
+- [x] Add 200ms fade animation for overlay open/close
+- [x] Ensure only one overlay can be open at a time
+- [x] Send TOUCH_OVERLAY_OPEN notification on open
+- [x] Send TOUCH_OVERLAY_CLOSE notification on close
+- [x] Attach touch handlers after MODULE_DOM_CREATED
 
 ## High Priority
 
