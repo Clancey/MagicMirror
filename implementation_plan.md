@@ -120,6 +120,10 @@
 
 ## Low Priority
 
+### Code Quality
+- [ ] Integrate Nunjucks templates for rendering - currently using template literals instead of .njk files
+- [ ] Remove or integrate unused .njk template files (overlay.njk, news-detail.njk, calendar-detail.njk, weather-detail.njk, photo-viewer.njk)
+
 ### Configuration & Polish
 - [x] Add configuration options for animationSpeed, backdropOpacity
 - [x] Add configuration for hideUIToggle position
@@ -142,7 +146,7 @@
 - [x] Loading state for weather data
 
 ## Bugs/Issues
-- None
+- Templates in templates/ directory exist but are never used - JS uses inline template literals instead of Nunjucks templates
 
 ## Notes
 - Implementation order: overlay infrastructure → hide UI toggle → news → calendar → weather → photo
