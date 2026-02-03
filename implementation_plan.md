@@ -175,7 +175,7 @@
 
 ## Code Quality Follow-ups
 
-- [?] Address FIXME in js/main.js:476 (config passing in tests)
+- [ ] Address FIXME in js/main.js:476 (config passing in tests)
 - [ ] Address FIXME in js/app.js:34 (Hotfix PR)
 - [ ] Address FIXME in js/check_config.js:24 (refactor into core)
 - [ ] Address FIXME in modules/default/calendar/calendarfetcherutils.js:131 (facebook birthday fix)
