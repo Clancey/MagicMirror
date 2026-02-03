@@ -48,7 +48,7 @@
 
 - [x] Show precipitation/UV values when available even if zero
 - [x] Add automated tests for MMM-TouchOverlay core flows (added tests for news navigation, defaults, photoData, calendarData, inactivityState)
-- [?] Reconcile spec template requirement with inline rendering (updated specs to show DOM structure instead of .njk templates)
+- [x] Reconcile spec template requirement with inline rendering (updated specs to show DOM structure instead of .njk templates)
 
 ### Hide UI Toggle
 
