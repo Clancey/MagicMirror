@@ -116,7 +116,7 @@
  - [x] Implement resumeSlideshow() notification
  - [x] Resume slideshow on closeOverlay when viewing photo
  - [x] Add photo viewer CSS styles
-- [ ] Optional: preloadImage() for smoother experience
+ - [?] Optional: preloadImage() for smoother experience
 
 ## Low Priority
 

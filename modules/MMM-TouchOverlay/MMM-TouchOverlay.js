@@ -325,7 +325,18 @@ Module.register("MMM-TouchOverlay", {
 			slideshowPaused: true
 		};
 
-		this.openOverlay("photo", this.photoData);
+		// Preload the current image before opening overlay for smoother experience
+		this.preloadImage(imageUrl)
+			.then(() => {
+				this.openOverlay("photo", this.photoData);
+
+				// Try to preload adjacent images for even smoother navigation
+				this.preloadAdjacentImages(imgElement);
+			})
+			.catch((err) => {
+				Log.error("MMM-TouchOverlay: Failed to preload image:", err);
+				this.openOverlay("photo", this.photoData);
+			});
 	},
 
 	extractPhotoMetadata: function (imgElement) {
@@ -349,6 +360,48 @@ Module.register("MMM-TouchOverlay", {
 			return pathname.split("/").pop() || null;
 		} catch (e) {
 			return null;
+		}
+	},
+
+	preloadImage: function (url) {
+		if (!url) return Promise.reject(new Error("No URL provided"));
+
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+
+			img.onload = () => resolve(img);
+			img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
+
+			img.src = url;
+		});
+	},
+
+	preloadAdjacentImages: function (currentImgElement) {
+		const parent = currentImgElement.parentElement;
+		if (!parent) return;
+
+		const images = Array.from(parent.querySelectorAll("img"));
+		const currentIndex = images.indexOf(currentImgElement);
+
+		if (currentIndex === -1) return;
+
+		const nextIndex = currentIndex + 1;
+		const prevIndex = currentIndex - 1;
+
+		if (images[nextIndex]) {
+			const nextUrl = images[nextIndex].src || images[nextIndex].dataset.src;
+			if (nextUrl) {
+				this.preloadImage(nextUrl).catch(() => {
+				});
+			}
+		}
+
+		if (images[prevIndex]) {
+			const prevUrl = images[prevIndex].src || images[prevIndex].dataset.src;
+			if (prevUrl) {
+				this.preloadImage(prevUrl).catch(() => {
+				});
+			}
 		}
 	},
 
