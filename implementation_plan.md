@@ -111,7 +111,7 @@
  - [ ] Create templates/photo-viewer.njk template (inline rendering) - no template file present
  - [x] Implement renderPhotoViewer() method
  - [x] Display photo scaled to fit (object-fit: contain)
-- [?] Display metadata (date, album, filename) when available
+ - [x] Display metadata (date, album, filename) when available
 - [?] Implement pauseSlideshow() notification
 - [?] Implement resumeSlideshow() notification
 - [?] Resume slideshow on closeOverlay when viewing photo
