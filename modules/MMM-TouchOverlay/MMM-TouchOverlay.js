@@ -10,6 +10,7 @@ Module.register("MMM-TouchOverlay", {
 		hideUITogglePosition: "bottom-right",
 		calendarDaysToShow: 14,
 		timeFormat: config.timeFormat, // Use global MagicMirror time format (12 or 24)
+		units: config.units, // Use global MagicMirror units (metric, imperial, us)
 		persistUIState: false, // Persist UI hidden state to localStorage
 		autoHideDelay: 60, // Auto-hide UI after X seconds of inactivity (0 to disable)
 		photoViewer: {
@@ -535,17 +536,12 @@ Module.register("MMM-TouchOverlay", {
 
 	// Weather detail methods
 	getWeatherIcon: function (weatherType) {
-		const iconMap = {
-			"day-sunny": "☀️",
-			"day-cloudy": "⛅",
-			"cloudy": "☁️",
-			"rain": "🌧️",
-			"snow": "❄️",
-			"thunderstorm": "⛈️",
-			"fog": "🌫️",
-			"wind": "💨"
-		};
-		return iconMap[weatherType] || "🌡️";
+		// Use Weather Icons font classes to match the weather module's style
+		// Returns HTML span with wi-{weatherType} class
+		if (!weatherType) {
+			return `<span class="wi wi-na"></span>`;
+		}
+		return `<span class="wi wi-${weatherType}"></span>`;
 	},
 
 	formatTemp: function (temp) {
@@ -553,10 +549,16 @@ Module.register("MMM-TouchOverlay", {
 	},
 
 	formatWind: function (speed) {
-		if (this.config.units === "imperial") {
-			return Math.round(speed);
-		}
 		return Math.round(speed);
+	},
+
+	getWindUnit: function () {
+		// Wind units based on config.units (matches weather module behavior)
+		// imperial/us = mph, metric = m/s
+		if (this.config.units === "imperial" || this.config.units === "us") {
+			return "mph";
+		}
+		return "m/s";
 	},
 
 	renderWeatherDetail: function () {
@@ -582,7 +584,11 @@ Module.register("MMM-TouchOverlay", {
 
 		const formatTime = (date) => {
 			const d = new Date(date);
-			return d.toLocaleTimeString("en-US", { hour: "numeric", hour12: true });
+			// Respect timeFormat setting (12 or 24 hour)
+			if (this.config.timeFormat === 12) {
+				return d.toLocaleTimeString("en-US", { hour: "numeric", hour12: true });
+			}
+			return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
 		};
 
 		const formatDayName = (date) => {
@@ -590,7 +596,7 @@ Module.register("MMM-TouchOverlay", {
 			return d.toLocaleDateString("en-US", { weekday: "short" });
 		};
 
-		const windUnit = this.config.units === "imperial" ? "mph" : "km/h";
+		const windUnit = this.getWindUnit();
 
 		let html = `
 			<div class="weather-detail">
