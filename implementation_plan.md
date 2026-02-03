@@ -56,7 +56,7 @@
 - [?] Add tests for UI hide/show toggle behavior and persistUIState localStorage flow
 - [?] Add tests for weather detail rendering (loading state, hourly/forecast bounds, precip/UV display)
 - [?] Add tests for photo viewer flows (preload, pause/resume notifications, metadata rendering)
-- [ ] Add tests for inactivity auto-hide behavior
+- [?] Add tests for inactivity auto-hide behavior (timer start/stop, recordActivity, auto-hide after timeout)
 
 ### Hide UI Toggle
 

@@ -1367,4 +1367,453 @@ describe("MMM-TouchOverlay e2e tests", () => {
 			await expect(overlay).toHaveAttribute("data-content", "photo");
 		});
 	});
+
+	describe("inactivity auto-hide behavior", () => {
+		beforeAll(async () => {
+			await helpers.startApplication(TOUCHOVERLAY_CONFIG);
+			await helpers.getDocument();
+			page = helpers.getPage();
+			await page.waitForTimeout(1000);
+		});
+
+		beforeEach(async () => {
+			// Reset UI state and inactivity timer
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.stopInactivityTimer();
+						module.uiState.hidden = false;
+						module.showUI();
+						module.config.autoHideDelay = 0; // Disable by default
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(100);
+		});
+
+		it("should not start timer when autoHideDelay is 0", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.autoHideDelay = 0;
+						module.startInactivityTimer();
+						break;
+					}
+				}
+			});
+
+			const timerId = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.inactivityState.timerId;
+					}
+				}
+				return undefined;
+			});
+
+			expect(timerId).toBeNull();
+		});
+
+		it("should not start timer when autoHideDelay is negative", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.autoHideDelay = -1;
+						module.startInactivityTimer();
+						break;
+					}
+				}
+			});
+
+			const timerId = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.inactivityState.timerId;
+					}
+				}
+				return undefined;
+			});
+
+			expect(timerId).toBeNull();
+		});
+
+		it("should start timer when autoHideDelay is positive", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.autoHideDelay = 60;
+						module.startInactivityTimer();
+						break;
+					}
+				}
+			});
+
+			const timerId = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.inactivityState.timerId;
+					}
+				}
+				return undefined;
+			});
+
+			expect(timerId).not.toBeNull();
+
+			// Clean up timer
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.stopInactivityTimer();
+						break;
+					}
+				}
+			});
+		});
+
+		it("should update lastActivity when recordActivity is called", async () => {
+			const beforeTime = Date.now();
+
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						// Set lastActivity to an old time
+						module.inactivityState.lastActivity = Date.now() - 60000;
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(50);
+
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.recordActivity();
+						break;
+					}
+				}
+			});
+
+			const lastActivity = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.inactivityState.lastActivity;
+					}
+				}
+				return 0;
+			});
+
+			// lastActivity should be recent (within the test execution window)
+			expect(lastActivity).toBeGreaterThanOrEqual(beforeTime);
+		});
+
+		it("should stop timer and clear timerId when stopInactivityTimer is called", async () => {
+			// Start a timer first
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.autoHideDelay = 60;
+						module.startInactivityTimer();
+						break;
+					}
+				}
+			});
+
+			// Verify timer is running
+			const timerIdBefore = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.inactivityState.timerId;
+					}
+				}
+				return undefined;
+			});
+			expect(timerIdBefore).not.toBeNull();
+
+			// Stop the timer
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.stopInactivityTimer();
+						break;
+					}
+				}
+			});
+
+			const timerIdAfter = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.inactivityState.timerId;
+					}
+				}
+				return undefined;
+			});
+
+			expect(timerIdAfter).toBeNull();
+		});
+
+		it("should hide UI after inactivity period elapses", async () => {
+			// Ensure UI is visible
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.uiState.hidden = false;
+						module.showUI();
+						break;
+					}
+				}
+			});
+
+			// Set a very short autoHideDelay for testing (1 second)
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.autoHideDelay = 1;
+						// Set lastActivity to 5 seconds ago to trigger on next check
+						module.inactivityState.lastActivity = Date.now() - 5000;
+						module.startInactivityTimer();
+						break;
+					}
+				}
+			});
+
+			// Wait for the interval to check (timer checks every 1 second, give it 2.5 seconds)
+			await page.waitForTimeout(2500);
+
+			// Check if UI is hidden
+			const isHidden = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.uiState.hidden;
+					}
+				}
+				return null;
+			});
+
+			expect(isHidden).toBe(true);
+
+			// Clean up
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.stopInactivityTimer();
+						break;
+					}
+				}
+			});
+		});
+
+		it("should not hide UI if activity occurred recently", async () => {
+			// Ensure UI is visible
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.uiState.hidden = false;
+						module.showUI();
+						break;
+					}
+				}
+			});
+
+			// Set autoHideDelay to 5 seconds, but keep activity fresh
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.autoHideDelay = 5;
+						module.inactivityState.lastActivity = Date.now(); // Fresh activity
+						module.startInactivityTimer();
+						break;
+					}
+				}
+			});
+
+			// Wait for one timer tick
+			await page.waitForTimeout(1500);
+
+			// UI should still be visible
+			const isHidden = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.uiState.hidden;
+					}
+				}
+				return null;
+			});
+
+			expect(isHidden).toBe(false);
+
+			// Clean up
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.stopInactivityTimer();
+						break;
+					}
+				}
+			});
+		});
+
+		it("should not hide UI if already hidden", async () => {
+			// Hide UI first
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.uiState.hidden = true;
+						module.hideUI();
+						break;
+					}
+				}
+			});
+
+			// Track if toggleUI was called
+			await page.evaluate(() => {
+				window.toggleUICallCount = 0;
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						const originalToggleUI = module.toggleUI.bind(module);
+						module.toggleUI = () => {
+							window.toggleUICallCount++;
+							originalToggleUI();
+						};
+						module._toggleUIWrapped = true;
+						break;
+					}
+				}
+			});
+
+			// Set up timer with old lastActivity
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.autoHideDelay = 2;
+						module.inactivityState.lastActivity = Date.now() - 5000;
+						module.startInactivityTimer();
+						break;
+					}
+				}
+			});
+
+			// Wait for timer tick
+			await page.waitForTimeout(1500);
+
+			// toggleUI should not have been called because UI was already hidden
+			const callCount = await page.evaluate(() => window.toggleUICallCount);
+			expect(callCount).toBe(0);
+
+			// Clean up
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.stopInactivityTimer();
+						break;
+					}
+				}
+			});
+		});
+
+		it("should record activity on keyboard events", async () => {
+			// Set lastActivity to old time
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.inactivityState.lastActivity = Date.now() - 60000;
+						break;
+					}
+				}
+			});
+
+			const oldActivity = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.inactivityState.lastActivity;
+					}
+				}
+				return 0;
+			});
+
+			// Simulate a keydown event
+			await page.keyboard.press("a");
+			await page.waitForTimeout(100);
+
+			const newActivity = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.inactivityState.lastActivity;
+					}
+				}
+				return 0;
+			});
+
+			expect(newActivity).toBeGreaterThan(oldActivity);
+		});
+
+		it("should record activity on mouse events", async () => {
+			// Set lastActivity to old time
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.inactivityState.lastActivity = Date.now() - 60000;
+						break;
+					}
+				}
+			});
+
+			const oldActivity = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.inactivityState.lastActivity;
+					}
+				}
+				return 0;
+			});
+
+			// Simulate a mouse movement
+			await page.mouse.move(100, 100);
+			await page.waitForTimeout(100);
+
+			const newActivity = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.inactivityState.lastActivity;
+					}
+				}
+				return 0;
+			});
+
+			expect(newActivity).toBeGreaterThan(oldActivity);
+		});
+	});
 });
