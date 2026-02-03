@@ -847,12 +847,13 @@ describe("MMM-TouchOverlay e2e tests", () => {
 		});
 
 		beforeEach(async () => {
-			// Clear localStorage and reset UI state before each test
+			// Clear localStorage and reset UI state and config before each test
 			await page.evaluate(() => {
 				localStorage.removeItem("mm-touch-ui-hidden");
 				const modules = MM.getModules();
 				for (const module of modules) {
 					if (module.name === "MMM-TouchOverlay") {
+						module.config.persistUIState = false; // Reset to default
 						module.uiState.hidden = false;
 						module.showUI();
 						break;
@@ -864,6 +865,17 @@ describe("MMM-TouchOverlay e2e tests", () => {
 
 		it("should not save state when persistUIState is false", async () => {
 			// The default config has persistUIState: false
+			// Ensure persistUIState is explicitly false for this test
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.persistUIState = false;
+						break;
+					}
+				}
+			});
+
 			const toggleBtn = page.locator(".touch-ui-toggle");
 			await toggleBtn.click();
 			await page.waitForTimeout(400);

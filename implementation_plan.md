@@ -18,6 +18,8 @@
 
 ### Bugs
 
+- [?] By default the UI should be visible. (needs investigation - UI visibility state on initial load)
+- [?] Tapping on the MMM-ImmichTileSlideShow tiles, doesn't make the images larger. (needs investigation - photo handler detection for tile images)
 - [x] The MMM-ImmichTileSlideShow background should always be visible. The toggle is to hide the content over the top of it. (Fixed CSS selector: changed .region.fullscreen_below to .region.fullscreen.below)
 
 ### Module Setup (Foundation - Blocks All Other Work)
@@ -200,6 +202,7 @@
 - [x] Address TODO in modules/default/weather/providers/weatherflow.js:105 (clarified comment - WeatherUtils handles conversion)
 - [x] Resolve TODO comment in js/module.js:434 (clarified as potential future enhancement)
 - [x] Remove/update stale placeholder comments in modules/MMM-TouchOverlay/MMM-TouchOverlay.js (updated 3 stale comments)
+- [x] Fix flaky e2e test for persistUIState (added explicit config reset in beforeEach and test)
 
 ## Notes
 
