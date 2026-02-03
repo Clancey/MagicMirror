@@ -103,7 +103,7 @@
 - [x] Add weather detail CSS styles
 
 ### Photo Viewer
-- [?] Investigate MMM-ImmichTileSlideShow DOM structure (generic selectors implemented)
+ - [x] Investigate MMM-ImmichTileSlideShow DOM structure (generic selectors implemented)
 - [?] Investigate MMM-ImmichTileSlideShow notification protocol (generic notifications sent)
 - [?] Implement attachPhotoHandlers() for slideshow images
 - [?] Implement handlePhotoTap() touch handler
