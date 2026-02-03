@@ -110,7 +110,7 @@
  - [x] Implement extractPhotoMetadata() method
  - [ ] Create templates/photo-viewer.njk template (inline rendering) - no template file present
  - [x] Implement renderPhotoViewer() method
-- [?] Display photo scaled to fit (object-fit: contain)
+ - [x] Display photo scaled to fit (object-fit: contain)
 - [?] Display metadata (date, album, filename) when available
 - [?] Implement pauseSlideshow() notification
 - [?] Implement resumeSlideshow() notification
