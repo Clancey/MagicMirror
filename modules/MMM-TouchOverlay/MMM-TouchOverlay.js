@@ -189,6 +189,17 @@ Module.register("MMM-TouchOverlay", {
 		document.addEventListener("click", (e) => {
 			if (this.overlayState.isOpen) return;
 
+			const immichTile = e.target.closest(".immich-tile");
+			if (immichTile) {
+				const mediaElement = immichTile.querySelector("video.immich-tile-video") ||
+					immichTile.querySelector(".immich-tile-img");
+				if (mediaElement) {
+					e.stopPropagation();
+					this.handlePhotoTap(mediaElement);
+				}
+				return;
+			}
+
 			// Look for common slideshow image selectors
 			const img = e.target.closest(
 				".MMM-ImmichTileSlideShow img, " +
@@ -360,7 +371,7 @@ Module.register("MMM-TouchOverlay", {
 	},
 
 	handlePhotoTap: function (imgElement) {
-		const imageUrl = imgElement.src || imgElement.dataset.src;
+		const imageUrl = this.getImageUrlFromElement(imgElement);
 		if (!imageUrl) return;
 
 		const metadata = this.extractPhotoMetadata(imgElement);
@@ -412,6 +423,36 @@ Module.register("MMM-TouchOverlay", {
 		} catch (e) {
 			return null;
 		}
+	},
+
+	getImageUrlFromElement: function (element) {
+		if (!element) return null;
+
+		if (element.tagName === "IMG") {
+			return element.src || element.dataset?.src || null;
+		}
+
+		if (element.tagName === "VIDEO") {
+			return element.currentSrc || element.src || element.poster || null;
+		}
+
+		const backgroundUrl = this.extractBackgroundImageUrl(element);
+		if (backgroundUrl) return backgroundUrl;
+
+		return element.dataset?.src || null;
+	},
+
+	extractBackgroundImageUrl: function (element) {
+		if (!element) return null;
+
+		const style = typeof window !== "undefined" && window.getComputedStyle
+			? window.getComputedStyle(element)
+			: element.style;
+		const backgroundImage = style?.backgroundImage || "";
+		if (!backgroundImage || backgroundImage === "none") return null;
+
+		const match = backgroundImage.match(/url\(["']?(.*?)["']?\)/);
+		return match ? match[1] : null;
 	},
 
 	preloadImage: function (url) {

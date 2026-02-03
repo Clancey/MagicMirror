@@ -277,6 +277,46 @@ describe("MMM-TouchOverlay unit tests", () => {
 		});
 	});
 
+	describe("getImageUrlFromElement", () => {
+		it("should return src for img elements", () => {
+			const img = { tagName: "IMG", src: "https://example.com/photo.jpg", dataset: {} };
+
+			expect(touchOverlay.getImageUrlFromElement(img)).toBe("https://example.com/photo.jpg");
+		});
+
+		it("should return currentSrc for video elements", () => {
+			const video = { tagName: "VIDEO", currentSrc: "https://example.com/clip.mp4", src: "" };
+
+			expect(touchOverlay.getImageUrlFromElement(video)).toBe("https://example.com/clip.mp4");
+		});
+
+		it("should return background image URL for div elements", () => {
+			const div = {
+				tagName: "DIV",
+				style: { backgroundImage: "url(\"https://example.com/bg.jpg\")" },
+				dataset: {}
+			};
+
+			expect(touchOverlay.getImageUrlFromElement(div)).toBe("https://example.com/bg.jpg");
+		});
+
+		it("should return dataset src when no background image is present", () => {
+			const div = {
+				tagName: "DIV",
+				style: { backgroundImage: "none" },
+				dataset: { src: "https://example.com/fallback.jpg" }
+			};
+
+			expect(touchOverlay.getImageUrlFromElement(div)).toBe("https://example.com/fallback.jpg");
+		});
+
+		it("should return null when no URL is available", () => {
+			const div = { tagName: "DIV", style: { backgroundImage: "none" }, dataset: {} };
+
+			expect(touchOverlay.getImageUrlFromElement(div)).toBeNull();
+		});
+	});
+
 	describe("overlayState management", () => {
 		it("should initialize with closed state", () => {
 			expect(touchOverlay.overlayState.isOpen).toBe(false);
