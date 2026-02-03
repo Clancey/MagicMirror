@@ -1014,4 +1014,357 @@ describe("MMM-TouchOverlay e2e tests", () => {
 			await expect(uvItem).toHaveCount(0);
 		});
 	});
+
+	describe("photo viewer flows", () => {
+		beforeAll(async () => {
+			await helpers.startApplication(TOUCHOVERLAY_CONFIG);
+			await helpers.getDocument();
+			page = helpers.getPage();
+			await page.waitForTimeout(1000);
+		});
+
+		beforeEach(async () => {
+			await ensureOverlayClosed(page);
+			// Reset photo data
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.photoData = {
+							currentImage: null,
+							metadata: null,
+							slideshowPaused: false
+						};
+						break;
+					}
+				}
+			});
+		});
+
+		it("should show message when no photo available", async () => {
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.photoData.currentImage = null;
+						module.openOverlay("photo", module.photoData);
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			await expect(page.locator(".touch-overlay-body")).toContainText("No photo available");
+		});
+
+		it("should render photo viewer with image", async () => {
+			// Use a data URI for testing (small transparent pixel)
+			const testImage = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+			await page.evaluate((imageUrl) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.photoData.currentImage = imageUrl;
+						module.photoData.metadata = null;
+						module.openOverlay("photo", module.photoData);
+						break;
+					}
+				}
+			}, testImage);
+			await page.waitForTimeout(400);
+
+			const photoViewer = page.locator(".photo-viewer");
+			await expect(photoViewer).toBeVisible();
+
+			const img = page.locator(".photo-viewer-image");
+			await expect(img).toBeVisible();
+		});
+
+		it("should render photo metadata when available", async () => {
+			const testImage = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+			await page.evaluate((imageUrl) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.photoData.currentImage = imageUrl;
+						module.photoData.metadata = {
+							date: "2024-01-15",
+							album: "Vacation Photos",
+							filename: "beach.jpg"
+						};
+						module.openOverlay("photo", module.photoData);
+						break;
+					}
+				}
+			}, testImage);
+			await page.waitForTimeout(400);
+
+			const metadata = page.locator(".photo-metadata");
+			await expect(metadata).toBeVisible();
+
+			await expect(page.locator(".photo-date")).toContainText("2024-01-15");
+			await expect(page.locator(".photo-album")).toContainText("Vacation Photos");
+			await expect(page.locator(".photo-filename")).toContainText("beach.jpg");
+		});
+
+		it("should not render metadata when showMetadata is false", async () => {
+			const testImage = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+			await page.evaluate((imageUrl) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.photoViewer.showMetadata = false;
+						module.photoData.currentImage = imageUrl;
+						module.photoData.metadata = {
+							date: "2024-01-15",
+							album: "Vacation Photos",
+							filename: "beach.jpg"
+						};
+						module.openOverlay("photo", module.photoData);
+						break;
+					}
+				}
+			}, testImage);
+			await page.waitForTimeout(400);
+
+			const metadata = page.locator(".photo-metadata");
+			await expect(metadata).toHaveCount(0);
+
+			// Restore setting
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.photoViewer.showMetadata = true;
+						break;
+					}
+				}
+			});
+		});
+
+		it("should send SLIDESHOW_PAUSE notification when pausing", async () => {
+			// Set up notification listener
+			await page.evaluate(() => {
+				window.testNotifications = [];
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						if (!module._sendNotificationWrapped) {
+							const originalSendNotification = module.sendNotification.bind(module);
+							module.sendNotification = (notification, payload) => {
+								window.testNotifications.push({ notification, payload });
+								originalSendNotification(notification, payload);
+							};
+							module._sendNotificationWrapped = true;
+						}
+						break;
+					}
+				}
+			});
+
+			// Clear notifications
+			await page.evaluate(() => {
+				window.testNotifications = [];
+			});
+
+			// Call pauseSlideshow
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.photoData.slideshowPaused = false;
+						module.pauseSlideshow();
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(100);
+
+			const pauseNotification = await page.evaluate(() => {
+				return window.testNotifications.find((n) => n.notification === "SLIDESHOW_PAUSE");
+			});
+
+			expect(pauseNotification).toBeDefined();
+		});
+
+		it("should send SLIDESHOW_RESUME notification when resuming", async () => {
+			// Set up notification listener
+			await page.evaluate(() => {
+				window.testNotifications = [];
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						if (!module._sendNotificationWrapped) {
+							const originalSendNotification = module.sendNotification.bind(module);
+							module.sendNotification = (notification, payload) => {
+								window.testNotifications.push({ notification, payload });
+								originalSendNotification(notification, payload);
+							};
+							module._sendNotificationWrapped = true;
+						}
+						break;
+					}
+				}
+			});
+
+			// Clear notifications and set paused state
+			await page.evaluate(() => {
+				window.testNotifications = [];
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.photoData.slideshowPaused = true;
+						break;
+					}
+				}
+			});
+
+			// Call resumeSlideshow
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.resumeSlideshow();
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(100);
+
+			const resumeNotification = await page.evaluate(() => {
+				return window.testNotifications.find((n) => n.notification === "SLIDESHOW_RESUME");
+			});
+
+			expect(resumeNotification).toBeDefined();
+		});
+
+		it("should not pause slideshow if already paused", async () => {
+			// Set up notification listener
+			await page.evaluate(() => {
+				window.testNotifications = [];
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						if (!module._sendNotificationWrapped) {
+							const originalSendNotification = module.sendNotification.bind(module);
+							module.sendNotification = (notification, payload) => {
+								window.testNotifications.push({ notification, payload });
+								originalSendNotification(notification, payload);
+							};
+							module._sendNotificationWrapped = true;
+						}
+						// Set already paused
+						module.photoData.slideshowPaused = true;
+						break;
+					}
+				}
+			});
+
+			// Clear and try to pause again
+			await page.evaluate(() => {
+				window.testNotifications = [];
+			});
+
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.pauseSlideshow();
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(100);
+
+			const notifications = await page.evaluate(() => {
+				return window.testNotifications;
+			});
+
+			// Should NOT have sent pause notification since already paused
+			const pauseNotification = notifications.find((n) => n.notification === "SLIDESHOW_PAUSE");
+			expect(pauseNotification).toBeUndefined();
+		});
+
+		it("should resume slideshow on overlay close when viewing photo", async () => {
+			const testImage = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+			// Set up notification listener
+			await page.evaluate(() => {
+				window.testNotifications = [];
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						if (!module._sendNotificationWrapped) {
+							const originalSendNotification = module.sendNotification.bind(module);
+							module.sendNotification = (notification, payload) => {
+								window.testNotifications.push({ notification, payload });
+								originalSendNotification(notification, payload);
+							};
+							module._sendNotificationWrapped = true;
+						}
+						break;
+					}
+				}
+			});
+
+			// Open photo viewer (which pauses slideshow)
+			await page.evaluate((imageUrl) => {
+				window.testNotifications = [];
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.photoData.currentImage = imageUrl;
+						module.photoData.slideshowPaused = true;
+						module.overlayState.isOpen = true;
+						module.overlayState.contentType = "photo";
+						break;
+					}
+				}
+			}, testImage);
+
+			// Clear notifications and close overlay
+			await page.evaluate(() => {
+				window.testNotifications = [];
+			});
+
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.closeOverlay();
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(400);
+
+			const resumeNotification = await page.evaluate(() => {
+				return window.testNotifications.find((n) => n.notification === "SLIDESHOW_RESUME");
+			});
+
+			expect(resumeNotification).toBeDefined();
+		});
+
+		it("should set data-content attribute to photo when viewing", async () => {
+			const testImage = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+			await page.evaluate((imageUrl) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.photoData.currentImage = imageUrl;
+						module.openOverlay("photo", module.photoData);
+						break;
+					}
+				}
+			}, testImage);
+			await page.waitForTimeout(400);
+
+			const overlay = page.locator(OVERLAY_SELECTOR);
+			await expect(overlay).toHaveAttribute("data-content", "photo");
+		});
+	});
 });
