@@ -813,9 +813,58 @@ Module.register("MMM-TouchOverlay", {
 			</div>
 		`;
 
+		this.attachPhotoSwipeHandlers();
+
 		// Set data attribute on overlay for photo-specific styling
 		if (this.overlayElement) {
 			this.overlayElement.setAttribute("data-content", "photo");
+		}
+	},
+
+	attachPhotoSwipeHandlers: function () {
+		this.attachSwipeHandlers(this.bodyElement, (direction) => {
+			this.navigatePhoto(direction);
+		});
+	},
+
+	navigatePhoto: function (direction) {
+		const allImages = document.querySelectorAll(".slideshow img, .photo img");
+		if (allImages.length === 0) return;
+
+		let currentIndex = -1;
+		for (let i = 0; i < allImages.length; i++) {
+			const src = allImages[i].src || allImages[i].dataset.src;
+			if (src === this.photoData.currentImage) {
+				currentIndex = i;
+				break;
+			}
+		}
+
+		if (currentIndex === -1) return;
+
+		let newIndex = currentIndex + direction;
+		if (direction === "left") {
+			newIndex = currentIndex + 1;
+		} else if (direction === "right") {
+			newIndex = currentIndex - 1;
+		}
+
+		if (newIndex >= 0 && newIndex < allImages.length) {
+			const nextImgElement = allImages[newIndex];
+			const nextImageUrl = nextImgElement.src || nextImgElement.dataset.src;
+
+			if (nextImageUrl) {
+				this.preloadImage(nextImageUrl)
+					.then(() => {
+						const metadata = this.extractPhotoMetadata(nextImgElement);
+						this.photoData.currentImage = nextImageUrl;
+						this.photoData.metadata = metadata;
+						this.renderPhotoViewer();
+					})
+					.catch((err) => {
+						Log.error("MMM-TouchOverlay: Failed to navigate to next photo:", err);
+					});
+			}
 		}
 	},
 
@@ -903,6 +952,41 @@ Module.register("MMM-TouchOverlay", {
 
 		if (nextBtn && !nextBtn.disabled) {
 			nextBtn.addEventListener("click", () => this.navigateNews(1));
+		}
+
+		this.attachSwipeHandlers(this.bodyElement, (direction) => {
+			if (direction === "left" && nextBtn && !nextBtn.disabled) {
+				this.navigateNews(1);
+			} else if (direction === "right" && prevBtn && !prevBtn.disabled) {
+				this.navigateNews(-1);
+			}
+		});
+	},
+
+	attachSwipeHandlers: function (element, callback) {
+		let touchStartX = 0;
+		let touchEndX = 0;
+		const minSwipeDistance = 50;
+
+		element.addEventListener("touchstart", (e) => {
+			touchStartX = e.changedTouches[0].screenX;
+		}, { passive: true });
+
+		element.addEventListener("touchend", (e) => {
+			touchEndX = e.changedTouches[0].screenX;
+			this.handleSwipe(touchStartX, touchEndX, minSwipeDistance, callback);
+		}, { passive: true });
+	},
+
+	handleSwipe: function (startX, endX, minDistance, callback) {
+		const diffX = endX - startX;
+
+		if (Math.abs(diffX) < minDistance) return;
+
+		if (diffX > 0) {
+			callback("right");
+		} else {
+			callback("left");
 		}
 	},
 
