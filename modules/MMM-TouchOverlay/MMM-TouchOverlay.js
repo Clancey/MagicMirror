@@ -107,7 +107,7 @@ Module.register("MMM-TouchOverlay", {
 		overlay.appendChild(content);
 		wrapper.appendChild(overlay);
 
-		// Hide UI toggle button (logic wired in later tasks)
+		// Hide UI toggle button
 		const uiToggleButton = document.createElement("button");
 		uiToggleButton.className = "touch-ui-toggle";
 		uiToggleButton.setAttribute("aria-label", "Hide interface");
@@ -311,7 +311,7 @@ Module.register("MMM-TouchOverlay", {
 		}
 	},
 
-	// Placeholder handlers - to be implemented in detail view tasks
+	// Touch event handlers for opening detail views
 	handleNewsfeedTap: function (e) {
 		if (this.newsItems.length === 0) return;
 
@@ -478,7 +478,7 @@ Module.register("MMM-TouchOverlay", {
 		Log.info("MMM-TouchOverlay: Requested slideshow resume");
 	},
 
-	// Placeholder render methods - to be implemented in detail view tasks
+	// Detail view rendering methods
 	renderNewsDetail: function () {
 		if (this.newsData.items.length === 0) {
 			this.bodyElement.innerHTML = "<p>No news items available</p>";
