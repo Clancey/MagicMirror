@@ -297,4 +297,84 @@ describe("MMM-TouchOverlay unit tests", () => {
 			expect(touchOverlay.newsData.currentIndex).toBe(0);
 		});
 	});
+
+	describe("navigateNews", () => {
+		beforeEach(() => {
+			// Reset news data and mock renderNewsDetail
+			touchOverlay.newsData = {
+				items: [
+					{ title: "Article 1" },
+					{ title: "Article 2" },
+					{ title: "Article 3" }
+				],
+				currentIndex: 1
+			};
+			touchOverlay.renderNewsDetail = () => {}; // Mock to avoid DOM operations
+		});
+
+		it("should navigate to next article when direction is 1", () => {
+			touchOverlay.navigateNews(1);
+			expect(touchOverlay.newsData.currentIndex).toBe(2);
+		});
+
+		it("should navigate to previous article when direction is -1", () => {
+			touchOverlay.navigateNews(-1);
+			expect(touchOverlay.newsData.currentIndex).toBe(0);
+		});
+
+		it("should not navigate past the end of the list", () => {
+			touchOverlay.newsData.currentIndex = 2; // Last item
+			touchOverlay.navigateNews(1);
+			expect(touchOverlay.newsData.currentIndex).toBe(2); // Should stay at 2
+		});
+
+		it("should not navigate before the start of the list", () => {
+			touchOverlay.newsData.currentIndex = 0; // First item
+			touchOverlay.navigateNews(-1);
+			expect(touchOverlay.newsData.currentIndex).toBe(0); // Should stay at 0
+		});
+	});
+
+	describe("defaults configuration", () => {
+		it("should have correct default values", () => {
+			expect(touchOverlay.defaults.animationSpeed).toBe(200);
+			expect(touchOverlay.defaults.backdropOpacity).toBe(0.8);
+			expect(touchOverlay.defaults.closeButtonSize).toBe(48);
+			expect(touchOverlay.defaults.hideUITogglePosition).toBe("bottom-right");
+			expect(touchOverlay.defaults.calendarDaysToShow).toBe(14);
+			expect(touchOverlay.defaults.persistUIState).toBe(false);
+			expect(touchOverlay.defaults.autoHideDelay).toBe(60);
+		});
+
+		it("should have photoViewer configuration", () => {
+			expect(touchOverlay.defaults.photoViewer).toBeDefined();
+			expect(touchOverlay.defaults.photoViewer.showMetadata).toBe(true);
+			expect(touchOverlay.defaults.photoViewer.slideshowPauseEnabled).toBe(true);
+		});
+	});
+
+	describe("photoData management", () => {
+		it("should initialize with null image and metadata", () => {
+			expect(touchOverlay.photoData.currentImage).toBeNull();
+			expect(touchOverlay.photoData.metadata).toBeNull();
+			expect(touchOverlay.photoData.slideshowPaused).toBe(false);
+		});
+	});
+
+	describe("calendarData management", () => {
+		it("should initialize with empty events array", () => {
+			expect(touchOverlay.calendarData.events).toEqual([]);
+		});
+	});
+
+	describe("inactivityState management", () => {
+		it("should have lastActivity timestamp", () => {
+			expect(touchOverlay.inactivityState.lastActivity).toBeDefined();
+			expect(typeof touchOverlay.inactivityState.lastActivity).toBe("number");
+		});
+
+		it("should initialize with null timerId", () => {
+			expect(touchOverlay.inactivityState.timerId).toBeNull();
+		});
+	});
 });
