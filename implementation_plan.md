@@ -42,26 +42,26 @@
 - [?] Implement toggleUI() method
 - [?] Implement hideUI() with CSS class body.ui-hidden
 - [?] Implement showUI() to restore modules
-- [ ] Add CSS for hiding regions (opacity 0, pointer-events none)
-- [ ] Add 300ms transition for hide/show
-- [ ] Position toggle button (configurable: bottom-right default)
-- [ ] Send TOUCH_UI_HIDDEN notification on toggle
+- [?] Add CSS for hiding regions (opacity 0, pointer-events none)
+- [?] Add 300ms transition for hide/show
+- [?] Position toggle button (configurable: bottom-right default)
+- [?] Send TOUCH_UI_HIDDEN notification on toggle
 - [ ] Optional: persist state to localStorage
 
 ### News Detail View
-- [ ] Listen for NEWS_FEED notification and store items
-- [ ] Implement handleNewsfeedTap() touch handler
-- [ ] Create templates/news-detail.njk template
-- [ ] Implement renderNewsDetail() method
-- [ ] Display headline in large bold text
-- [ ] Display source name and relative timestamp
-- [ ] Display summary/description if available
-- [ ] Display URL indicator (non-clickable)
-- [ ] Add prev/next navigation buttons (48x48px)
-- [ ] Implement navigateNews(direction) method
-- [ ] Show position indicator (X / Y)
-- [ ] Disable nav buttons at list boundaries
-- [ ] Add news detail CSS styles
+- [?] Listen for NEWS_FEED notification and store items
+- [?] Implement handleNewsfeedTap() touch handler
+- [?] Create templates/news-detail.njk template
+- [?] Implement renderNewsDetail() method
+- [?] Display headline in large bold text
+- [?] Display source name and relative timestamp
+- [?] Display summary/description if available
+- [?] Display URL indicator (non-clickable)
+- [?] Add prev/next navigation buttons (48x48px)
+- [?] Implement navigateNews(direction) method
+- [?] Show position indicator (X / Y)
+- [?] Disable nav buttons at list boundaries
+- [?] Add news detail CSS styles
 
 ### Calendar Detail View
 - [ ] Listen for CALENDAR_EVENTS notification and store events

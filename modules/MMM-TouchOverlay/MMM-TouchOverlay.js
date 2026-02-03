@@ -26,6 +26,12 @@ Module.register("MMM-TouchOverlay", {
 	calendarEvents: [],
 	weatherData: null,
 
+	// News detail state
+	newsData: {
+		items: [],
+		currentIndex: 0
+	},
+
 	getStyles: function () {
 		return ["MMM-TouchOverlay.css"];
 	},
@@ -108,6 +114,7 @@ Module.register("MMM-TouchOverlay", {
 				break;
 			case "NEWS_FEED":
 				this.newsItems = payload.items || [];
+				this.newsData.items = payload.items || [];
 				break;
 			case "CALENDAR_EVENTS":
 				this.calendarEvents = payload || [];
@@ -231,7 +238,8 @@ Module.register("MMM-TouchOverlay", {
 	// Placeholder handlers - to be implemented in detail view tasks
 	handleNewsfeedTap: function (e) {
 		if (this.newsItems.length > 0) {
-			this.openOverlay("news", { items: this.newsItems, currentIndex: 0 });
+			this.newsData.currentIndex = 0;
+			this.openOverlay("news", this.newsData);
 		}
 	},
 
@@ -249,7 +257,58 @@ Module.register("MMM-TouchOverlay", {
 
 	// Placeholder render methods - to be implemented in detail view tasks
 	renderNewsDetail: function () {
-		this.bodyElement.innerHTML = "<p>News detail view - to be implemented</p>";
+		if (this.newsData.items.length === 0) {
+			this.bodyElement.innerHTML = "<p>No news items available</p>";
+			return;
+		}
+
+		const item = this.newsData.items[this.newsData.currentIndex];
+		if (!item) {
+			this.bodyElement.innerHTML = "<p>Article not found</p>";
+			return;
+		}
+
+		const formatDate = (dateString) => {
+			if (!dateString) return "";
+			const date = new Date(dateString);
+			const now = new Date();
+			const diffMs = now - date;
+			const diffMins = Math.floor(diffMs / 60000);
+			const diffHours = Math.floor(diffMs / 3600000);
+			const diffDays = Math.floor(diffMs / 86400000);
+
+			if (diffMins < 60) return `${diffMins}m ago`;
+			if (diffHours < 24) return `${diffHours}h ago`;
+			if (diffDays < 7) return `${diffDays}d ago`;
+			return date.toLocaleDateString();
+		};
+
+		this.bodyElement.innerHTML = `
+			<div class="news-detail">
+				<div class="news-detail-header">
+					<span class="news-source">${item.sourceTitle || "Unknown"}</span>
+					<span class="news-date">${formatDate(item.pubdate)}</span>
+				</div>
+
+				<h1 class="news-headline">${item.title || "No title"}</h1>
+
+				${item.description ? `<div class="news-summary">${item.description}</div>` : ""}
+
+				${item.url ? `
+				<div class="news-link-indicator">
+					<span class="news-link-icon">🔗</span>
+					<span class="news-link-text">${item.url.length > 50 ? item.url.substring(0, 50) + "..." : item.url}</span>
+				</div>` : ""}
+
+				<div class="news-navigation">
+					<button class="news-nav-btn news-prev" aria-label="Previous article" ${this.newsData.currentIndex === 0 ? "disabled" : ""}>‹</button>
+					<span class="news-position">${this.newsData.currentIndex + 1} / ${this.newsData.items.length}</span>
+					<button class="news-nav-btn news-next" aria-label="Next article" ${this.newsData.currentIndex >= this.newsData.items.length - 1 ? "disabled" : ""}>›</button>
+				</div>
+			</div>
+		`;
+
+		this.attachNewsNavigationHandlers();
 	},
 
 	renderWeatherDetail: function () {
@@ -296,6 +355,28 @@ Module.register("MMM-TouchOverlay", {
 				this.uiToggleButton.style.display = "flex";
 				this.uiShowButton.style.display = "none";
 			}
+		}
+	},
+
+	// News navigation methods
+	attachNewsNavigationHandlers: function () {
+		const prevBtn = this.bodyElement.querySelector(".news-prev");
+		const nextBtn = this.bodyElement.querySelector(".news-next");
+
+		if (prevBtn && !prevBtn.disabled) {
+			prevBtn.addEventListener("click", () => this.navigateNews(-1));
+		}
+
+		if (nextBtn && !nextBtn.disabled) {
+			nextBtn.addEventListener("click", () => this.navigateNews(1));
+		}
+	},
+
+	navigateNews: function (direction) {
+		const newIndex = this.newsData.currentIndex + direction;
+		if (newIndex >= 0 && newIndex < this.newsData.items.length) {
+			this.newsData.currentIndex = newIndex;
+			this.renderNewsDetail();
 		}
 	}
 });
