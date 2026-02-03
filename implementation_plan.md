@@ -122,7 +122,7 @@
 
 ### Code Quality
 - [x] Decided to keep inline template literals (simpler, working well, no Nunjucks dependency needed)
-- [?] Remove unused .njk template files and templates directory (removed: overlay.njk, news-detail.njk, calendar-detail.njk, weather-detail.njk, photo-viewer.njk)
+- [x] Remove unused .njk template files and templates directory (removed: overlay.njk, news-detail.njk, calendar-detail.njk, weather-detail.njk, photo-viewer.njk)
 
 ### Configuration & Polish
 - [x] Add configuration options for animationSpeed, backdropOpacity
