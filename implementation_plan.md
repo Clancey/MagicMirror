@@ -126,7 +126,7 @@
  - [x] Add configuration for photoViewer.showMetadata
 - [x] Add configuration for calendar daysToShow
 - [x] Document module configuration in README
-- [ ] Test on touch-capable display
+- [ ] Test on touch-capable display (blocked: no touch hardware available in this environment)
 
 ### Accessibility
 - [x] Ensure all interactive elements have aria-labels
