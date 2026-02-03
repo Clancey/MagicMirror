@@ -1585,6 +1585,30 @@ describe("MMM-TouchOverlay e2e tests", () => {
 		});
 
 		it("should have vertical scrolling for calendar list", async () => {
+			const today = new Date();
+			today.setHours(today.getHours() + 1);
+
+			const mockEvents = [
+				{
+					title: "Scrollable Event",
+					startDate: today.getTime(),
+					endDate: today.getTime() + 3600000,
+					fullDayEvent: false
+				}
+			];
+
+			await page.evaluate((events) => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.calendarData.events = events;
+						module.openOverlay("calendar", events);
+						break;
+					}
+				}
+			}, mockEvents);
+			await page.waitForTimeout(400);
+
 			const calendarDetail = page.locator(".calendar-detail");
 			// The CSS sets max-height and overflow-y: auto
 			const overflowY = await calendarDetail.evaluate((el) => getComputedStyle(el).overflowY);
