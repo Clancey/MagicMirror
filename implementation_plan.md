@@ -95,11 +95,11 @@
 - [?] Display humidity percentage
 - [?] Display wind speed with appropriate units
 - [ ] Display weather icon for current conditions
-- [ ] Display hourly forecast (next 12 hours)
-- [ ] Add horizontal scroll for hourly forecast
-- [ ] Display daily forecast (7 days) with high/low
-- [ ] Display precipitation probability when available
-- [ ] Display UV index when available
+- [?] Display hourly forecast (next 12 hours)
+- [?] Add horizontal scroll for hourly forecast
+- [?] Display daily forecast (7 days) with high/low
+- [?] Display precipitation probability when available
+- [?] Display UV index when available
 - [?] Add weather detail CSS styles
 
 ### Photo Viewer
@@ -121,19 +121,19 @@
 ## Low Priority
 
 ### Configuration & Polish
-- [ ] Add configuration options for animationSpeed, backdropOpacity
-- [ ] Add configuration for hideUIToggle position
+- [?] Add configuration options for animationSpeed, backdropOpacity
+- [?] Add configuration for hideUIToggle position
 - [ ] Add configuration for photoViewer.showMetadata
-- [ ] Add configuration for calendar daysToShow
-- [ ] Document module configuration in README
+- [?] Add configuration for calendar daysToShow
+- [?] Document module configuration in README
 - [ ] Test on touch-capable display
 
 ### Accessibility
-- [ ] Ensure all interactive elements have aria-labels
-- [ ] Ensure close button has visible focus state
-- [ ] Verify high contrast text on overlays
-- [ ] Verify no color-only indicators
-- [ ] Test keyboard navigation (Tab, Escape)
+- [?] Ensure all interactive elements have aria-labels
+- [?] Ensure close button has visible focus state
+- [?] Verify high contrast text on overlays
+- [?] Verify no color-only indicators
+- [?] Test keyboard navigation (Tab, Escape)
 
 ### Optional Enhancements
 - [ ] Swipe navigation for news articles

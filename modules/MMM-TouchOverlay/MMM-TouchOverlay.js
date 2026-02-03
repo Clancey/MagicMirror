@@ -6,7 +6,9 @@ Module.register("MMM-TouchOverlay", {
 	defaults: {
 		animationSpeed: 200,
 		backdropOpacity: 0.8,
-		closeButtonSize: 48
+		closeButtonSize: 48,
+		hideUITogglePosition: "bottom-right",
+		calendarDaysToShow: 14
 	},
 
 	// Internal state
@@ -35,7 +37,7 @@ Module.register("MMM-TouchOverlay", {
 	// Calendar detail state
 	calendarData: {
 		events: [],
-		daysToShow: 14
+		daysToShow: this.config.calendarDaysToShow || 14
 	},
 
 	getStyles: function () {
@@ -92,6 +94,7 @@ Module.register("MMM-TouchOverlay", {
 		uiToggleButton.style.height = "48px";
 		uiToggleButton.innerHTML = "<span class=\"toggle-icon\">👁</span>";
 		uiToggleButton.addEventListener("click", () => this.toggleUI());
+		this.applyTogglePosition(uiToggleButton, this.config.hideUITogglePosition);
 		wrapper.appendChild(uiToggleButton);
 
 		// Show UI button (visible only when UI is hidden)
@@ -101,6 +104,7 @@ Module.register("MMM-TouchOverlay", {
 		uiShowButton.innerHTML = "<span class=\"show-icon\">👁</span><span class=\"show-text\">UI</span>";
 		uiShowButton.style.display = "none";
 		uiShowButton.addEventListener("click", () => this.toggleUI());
+		this.applyTogglePosition(uiShowButton, this.config.hideUITogglePosition);
 		wrapper.appendChild(uiShowButton);
 
 		// Store reference for later updates
@@ -620,6 +624,17 @@ Module.register("MMM-TouchOverlay", {
 	},
 
 	// UI Toggle Methods
+	applyTogglePosition: function (button, position) {
+		const positions = {
+			"top-left": { top: "24px", left: "24px", right: "auto", bottom: "auto" },
+			"top-right": { top: "24px", right: "24px", left: "auto", bottom: "auto" },
+			"bottom-left": { bottom: "24px", left: "24px", right: "auto", top: "auto" },
+			"bottom-right": { bottom: "24px", right: "24px", left: "auto", top: "auto" }
+		};
+		const pos = positions[position] || positions["bottom-right"];
+		Object.assign(button.style, pos);
+	},
+
 	toggleUI: function () {
 		this.uiState.hidden = !this.uiState.hidden;
 
