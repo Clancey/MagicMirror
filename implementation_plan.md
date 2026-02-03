@@ -113,7 +113,7 @@
  - [x] Display photo scaled to fit (object-fit: contain)
  - [x] Display metadata (date, album, filename) when available
  - [x] Implement pauseSlideshow() notification
-- [?] Implement resumeSlideshow() notification
+ - [x] Implement resumeSlideshow() notification
 - [?] Resume slideshow on closeOverlay when viewing photo
 - [?] Add photo viewer CSS styles
 - [ ] Optional: preloadImage() for smoother experience
