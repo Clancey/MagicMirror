@@ -745,7 +745,10 @@ Module.register("MMM-TouchOverlay", {
 		});
 
 		return Object.keys(groups).sort().map(dateKey => {
-			const date = new Date(dateKey);
+			// Parse dateKey (YYYY-MM-DD) as local date, not UTC
+			const [year, month, day] = dateKey.split("-").map(Number);
+			const date = new Date(year, month - 1, day);
+
 			const today = new Date();
 			today.setHours(0, 0, 0, 0);
 			const tomorrow = new Date(today);
