@@ -471,16 +471,19 @@ const MM = (function () {
 
 	/**
 	 * Loads the core config and combines it with the system defaults.
+	 * @param overrideConfig
 	 */
-	const loadConfig = function () {
-		// FIXME: Think about how to pass config around without breaking tests
-		if (typeof config === "undefined") {
+	const loadConfig = function (overrideConfig) {
+		const baseConfig = overrideConfig
+		  || (typeof config !== "undefined" ? config : (typeof globalThis !== "undefined" ? globalThis.config : undefined));
+
+		if (typeof baseConfig === "undefined") {
 			config = defaults;
 			Log.error("Config file is missing! Please create a config file.");
 			return;
 		}
 
-		config = Object.assign({}, defaults, config);
+		config = Object.assign({}, defaults, baseConfig);
 	};
 
 	/**
@@ -579,10 +582,11 @@ const MM = (function () {
 
 		/**
 		 * Main init method.
+		 * @param overrideConfig
 		 */
-		async init () {
+		async init (overrideConfig) {
 			Log.info("Initializing MagicMirror².");
-			loadConfig();
+			loadConfig(overrideConfig);
 
 			Log.setLogLevel(config.logLevel);
 
