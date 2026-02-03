@@ -67,9 +67,19 @@ Module.register("MMM-TouchOverlay", {
 		overlay.appendChild(content);
 		wrapper.appendChild(overlay);
 
+		// Hide UI toggle button (logic wired in later tasks)
+		const uiToggleButton = document.createElement("button");
+		uiToggleButton.className = "touch-ui-toggle";
+		uiToggleButton.setAttribute("aria-label", "Hide interface");
+		uiToggleButton.style.width = "48px";
+		uiToggleButton.style.height = "48px";
+		uiToggleButton.innerHTML = "<span class=\"toggle-icon\">👁</span>";
+		wrapper.appendChild(uiToggleButton);
+
 		// Store reference for later updates
 		this.overlayElement = overlay;
 		this.bodyElement = body;
+		this.uiToggleButton = uiToggleButton;
 
 		return wrapper;
 	},

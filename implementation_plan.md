@@ -37,7 +37,7 @@
 ## Medium Priority
 
 ### Hide UI Toggle
-- [ ] Create toggle button DOM (48x48px touch target)
+- [?] Create toggle button DOM (48x48px touch target)
 - [ ] Create "Show UI" button DOM for hidden state
 - [ ] Implement toggleUI() method
 - [ ] Implement hideUI() with CSS class body.ui-hidden
