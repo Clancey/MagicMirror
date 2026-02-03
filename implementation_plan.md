@@ -127,9 +127,10 @@
 ### Configuration & Polish
 - [x] Add configuration options for animationSpeed, backdropOpacity
 - [x] Add configuration for hideUIToggle position
- - [x] Add configuration for photoViewer.showMetadata
+  - [x] Add configuration for photoViewer.showMetadata
 - [x] Add configuration for calendar daysToShow
 - [x] Document module configuration in README
+- [?] Add MMM-TouchOverlay module to config/config.js with default configuration
 - [B] Test on touch-capable display (blocked: no touch hardware available in this environment)
 
 ### Accessibility
