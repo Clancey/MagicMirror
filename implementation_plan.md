@@ -94,7 +94,7 @@
 - [?] Display feels-like temperature
 - [?] Display humidity percentage
 - [?] Display wind speed with appropriate units
-- [ ] Display weather icon for current conditions
+- [?] Display weather icon for current conditions
 - [?] Display hourly forecast (next 12 hours)
 - [?] Add horizontal scroll for hourly forecast
 - [?] Display daily forecast (7 days) with high/low
