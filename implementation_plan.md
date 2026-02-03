@@ -18,7 +18,7 @@
 
 ### Bugs
 
-- [?] The MMM-ImmichTileSlideShow background should always be visible. The toggle is to hide the content over the top of it. (Fixed CSS selector: changed .region.fullscreen_below to .region.fullscreen.below)
+- [x] The MMM-ImmichTileSlideShow background should always be visible. The toggle is to hide the content over the top of it. (Fixed CSS selector: changed .region.fullscreen_below to .region.fullscreen.below)
 
 ### Module Setup (Foundation - Blocks All Other Work)
 
