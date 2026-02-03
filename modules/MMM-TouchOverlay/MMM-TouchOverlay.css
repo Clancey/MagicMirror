@@ -267,3 +267,122 @@ body.ui-hidden .touch-overlay {
 	color: rgba(255, 255, 255, 0.6);
 	font-size: 14px;
 }
+
+/* Calendar Detail View */
+.calendar-detail {
+	max-width: 600px;
+	width: 100%;
+	max-height: 80vh;
+	overflow-y: auto;
+}
+
+.calendar-title {
+	font-size: 24px;
+	font-weight: 300;
+	margin-bottom: 24px;
+	text-align: center;
+}
+
+.calendar-empty {
+	text-align: center;
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 18px;
+	padding: 48px 0;
+}
+
+/* Date Headers */
+.calendar-day {
+	margin-bottom: 24px;
+}
+
+.calendar-date-header {
+	font-size: 14px;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.6);
+	padding-bottom: 8px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	margin-bottom: 12px;
+}
+
+.calendar-date-header.today {
+	color: #4a9eff;
+}
+
+.calendar-date-header.tomorrow {
+	color: #7eb8ff;
+}
+
+/* Events */
+.calendar-events {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.calendar-event {
+	display: flex;
+	gap: 16px;
+	padding: 12px;
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 8px;
+	border-left: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.calendar-event.past {
+	opacity: 0.5;
+}
+
+.calendar-event.all-day {
+	background: rgba(255, 255, 255, 0.08);
+}
+
+/* Time Column */
+.event-time {
+	min-width: 80px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	font-size: 14px;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.event-separator {
+	color: rgba(255, 255, 255, 0.4);
+}
+
+.all-day-badge {
+	background: rgba(255, 255, 255, 0.15);
+	padding: 2px 8px;
+	border-radius: 4px;
+	font-size: 12px;
+	text-transform: uppercase;
+}
+
+/* Details Column */
+.event-details {
+	flex: 1;
+}
+
+.event-title {
+	font-size: 16px;
+	font-weight: 500;
+	margin-bottom: 4px;
+}
+
+.event-location {
+	font-size: 14px;
+	color: rgba(255, 255, 255, 0.6);
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.location-icon {
+	font-size: 12px;
+}
+
+.event-calendar {
+	font-size: 12px;
+	color: rgba(255, 255, 255, 0.4);
+	margin-top: 4px;
+}

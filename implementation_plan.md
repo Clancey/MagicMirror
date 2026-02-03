@@ -64,23 +64,23 @@
 - [?] Add news detail CSS styles
 
 ### Calendar Detail View
-- [ ] Listen for CALENDAR_EVENTS notification and store events
-- [ ] Implement handleCalendarTap() touch handler
-- [ ] Create templates/calendar-detail.njk template
-- [ ] Implement groupEventsByDate() method
-- [ ] Implement formatEvent() method
-- [ ] Implement renderCalendarDetail() method
-- [ ] Display events grouped by date with headers
-- [ ] Highlight "Today" and "Tomorrow" headers
-- [ ] Display event title, start/end times
-- [ ] Display "All Day" badge for full-day events
-- [ ] Display location when available
-- [ ] Display calendar name when available
-- [ ] Show event color coding (border-left)
-- [ ] Dim past events (earlier today)
-- [ ] Add vertical scrolling for long lists
-- [ ] Show "No upcoming events" empty state
-- [ ] Add calendar detail CSS styles
+- [?] Listen for CALENDAR_EVENTS notification and store events
+- [?] Implement handleCalendarTap() touch handler
+- [?] Create templates/calendar-detail.njk template
+- [?] Implement groupEventsByDate() method
+- [?] Implement formatEvent() method
+- [?] Implement renderCalendarDetail() method
+- [?] Display events grouped by date with headers
+- [?] Highlight "Today" and "Tomorrow" headers
+- [?] Display event title, start/end times
+- [?] Display "All Day" badge for full-day events
+- [?] Display location when available
+- [?] Display calendar name when available
+- [?] Show event color coding (border-left)
+- [?] Dim past events (earlier today)
+- [?] Add vertical scrolling for long lists
+- [?] Show "No upcoming events" empty state
+- [?] Add calendar detail CSS styles
 
 ### Weather Detail View
 - [ ] Listen for WEATHER_UPDATED notification and store data

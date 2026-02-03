@@ -32,6 +32,12 @@ Module.register("MMM-TouchOverlay", {
 		currentIndex: 0
 	},
 
+	// Calendar detail state
+	calendarData: {
+		events: [],
+		daysToShow: 14
+	},
+
 	getStyles: function () {
 		return ["MMM-TouchOverlay.css"];
 	},
@@ -118,6 +124,7 @@ Module.register("MMM-TouchOverlay", {
 				break;
 			case "CALENDAR_EVENTS":
 				this.calendarEvents = payload || [];
+				this.calendarData.events = payload || [];
 				break;
 			case "WEATHER_UPDATED":
 				this.weatherData = payload;
@@ -315,8 +322,160 @@ Module.register("MMM-TouchOverlay", {
 		this.bodyElement.innerHTML = "<p>Weather detail view - to be implemented</p>";
 	},
 
+	// Calendar detail methods
+	formatEvent: function (event) {
+		const now = new Date();
+		const start = new Date(event.startDate);
+		const end = new Date(event.endDate);
+
+		const timeFormat = (date) => {
+			const hours = date.getHours();
+			const minutes = date.getMinutes().toString().padStart(2, "0");
+			return `${hours}:${minutes}`;
+		};
+
+		return {
+			title: event.title || "Untitled Event",
+			startTime: event.fullDayEvent ? null : timeFormat(start),
+			endTime: event.fullDayEvent ? null : timeFormat(end),
+			fullDayEvent: event.fullDayEvent || false,
+			location: event.location || null,
+			color: event.color || null,
+			calendarName: event.calendarName || null,
+			isPast: end < now
+		};
+	},
+
+	groupEventsByDate: function (events, daysToShow) {
+		const now = new Date();
+		now.setHours(0, 0, 0, 0);
+		const endDate = new Date(now);
+		endDate.setDate(endDate.getDate() + daysToShow);
+		endDate.setHours(23, 59, 59, 999);
+
+		const filteredEvents = events
+			.filter(e => new Date(e.endDate) > now && new Date(e.startDate) <= endDate)
+			.sort((a, b) => a.startDate - b.startDate);
+
+		const groups = {};
+		filteredEvents.forEach(event => {
+			const eventDate = new Date(event.startDate);
+			eventDate.setHours(0, 0, 0, 0);
+			const dateKey = eventDate.toISOString().split("T")[0];
+			if (!groups[dateKey]) {
+				groups[dateKey] = [];
+			}
+			groups[dateKey].push(event);
+		});
+
+		return Object.keys(groups).sort().map(dateKey => {
+			const date = new Date(dateKey);
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+			const tomorrow = new Date(today);
+			tomorrow.setDate(tomorrow.getDate() + 1);
+
+			const isToday = date.getTime() === today.getTime();
+			const isTomorrow = date.getTime() === tomorrow.getTime();
+			const isThisWeek = date < new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+			let dateLabel;
+			let headerClass = "";
+
+			if (isToday) {
+				dateLabel = "Today";
+				headerClass = "today";
+			} else if (isTomorrow) {
+				dateLabel = "Tomorrow";
+				headerClass = "tomorrow";
+			} else if (isThisWeek) {
+				dateLabel = date.toLocaleDateString("en-US", { weekday: "long" });
+			} else {
+				dateLabel = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+			}
+
+			return {
+				dateKey,
+				dateLabel,
+				headerClass,
+				events: groups[dateKey].map(e => this.formatEvent(e))
+			};
+		});
+	},
+
 	renderCalendarDetail: function () {
-		this.bodyElement.innerHTML = "<p>Calendar detail view - to be implemented</p>";
+		const eventsByDate = this.groupEventsByDate(
+			this.calendarData.events,
+			this.calendarData.daysToShow
+		);
+
+		if (eventsByDate.length === 0) {
+			this.bodyElement.innerHTML = `
+				<div class="calendar-detail">
+					<h1 class="calendar-title">Upcoming Events</h1>
+					<div class="calendar-empty">No upcoming events</div>
+				</div>
+			`;
+			return;
+		}
+
+		let html = `
+			<div class="calendar-detail">
+				<h1 class="calendar-title">Upcoming Events</h1>
+		`;
+
+		eventsByDate.forEach(dateGroup => {
+			html += `
+				<section class="calendar-day">
+					<h2 class="calendar-date-header ${dateGroup.headerClass}">
+						${dateGroup.dateLabel}
+					</h2>
+					<div class="calendar-events">
+			`;
+
+			dateGroup.events.forEach(event => {
+				const colorStyle = event.color ? `border-left-color: ${event.color}` : "";
+				const allDayClass = event.fullDayEvent ? "all-day" : "";
+				const pastClass = event.isPast ? "past" : "";
+
+				let timeHtml = "";
+				if (event.fullDayEvent) {
+					timeHtml = `<span class="all-day-badge">All Day</span>`;
+				} else {
+					timeHtml = `<span class="event-start">${event.startTime}</span>`;
+					if (event.endTime) {
+						timeHtml += `<span class="event-separator">-</span><span class="event-end">${event.endTime}</span>`;
+					}
+				}
+
+				let detailsHtml = `<div class="event-title">${event.title}</div>`;
+				if (event.location) {
+					detailsHtml += `
+						<div class="event-location">
+							<span class="location-icon">📍</span>
+							${event.location}
+						</div>`;
+				}
+				if (event.calendarName) {
+					detailsHtml += `<div class="event-calendar">${event.calendarName}</div>`;
+				}
+
+				html += `
+					<div class="calendar-event ${allDayClass} ${pastClass}" style="${colorStyle}">
+						<div class="event-time">${timeHtml}</div>
+						<div class="event-details">${detailsHtml}</div>
+					</div>
+				`;
+			});
+
+			html += `
+					</div>
+				</section>
+			`;
+		});
+
+		html += `</div>`;
+		this.bodyElement.innerHTML = html;
 	},
 
 	renderPhotoViewer: function () {
