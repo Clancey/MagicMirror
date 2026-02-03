@@ -128,13 +128,13 @@ const CalendarFetcherUtils = {
 				return;
 			}
 
-			// FIXME: Ugly fix to solve the facebook birthday issue.
-			// Otherwise, the recurring events only show the birthday for next year.
+			// Facebook birthday workaround: Facebook birthday events have a specific
+			// UID pattern (@facebook.com) and need special handling because their RRULE
+			// expansion only shows next year's occurrence. Instead, we treat them as
+			// non-recurring full-day events.
 			let isFacebookBirthday = false;
-			if (typeof event.uid !== "undefined") {
-				if (event.uid.indexOf("@facebook.com") !== -1) {
-					isFacebookBirthday = true;
-				}
+			if (typeof event.uid !== "undefined" && event.uid.indexOf("@facebook.com") !== -1) {
+				isFacebookBirthday = true;
 			}
 
 			if (event.type === "VEVENT") {

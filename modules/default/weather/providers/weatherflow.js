@@ -102,7 +102,7 @@ WeatherProvider.register("weatherflow", {
 					weather.weatherType = this.convertWeatherType(hour.icon);
 					weather.precipitationProbability = hour.precip_probability;
 					weather.precipitationAmount = hour.precip; // NOTE: precipitation type is available
-					weather.precipitationUnits = "mm"; // Hardcoded via request, TODO: Add conversion
+					weather.precipitationUnits = "mm"; // WeatherUtils handles conversion to imperial when displaying
 					weather.uv_index = hour.uv;
 
 					hours.push(weather);

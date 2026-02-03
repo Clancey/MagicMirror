@@ -178,9 +178,9 @@
 - [?] Address FIXME in js/main.js:476 (config passing in tests - implemented: init() accepts overrideConfig)
 - [?] Address FIXME in js/app.js:34 (clarified as historical documentation for Docker support)
 - [?] Address FIXME in js/check_config.js:24 (refactored to use getConfigFilePath from server_functions.js)
-- [ ] Address FIXME in modules/default/calendar/calendarfetcherutils.js:131 (facebook birthday fix)
-- [ ] Address TODO in modules/default/weather/providers/openweathermap.js:430 (hide doesn't exist)
-- [ ] Address TODO in modules/default/weather/providers/weatherflow.js:105 (precipitation unit conversion)
+- [?] Address FIXME in modules/default/calendar/calendarfetcherutils.js:131 (clarified comment explaining Facebook birthday workaround)
+- [?] Address TODO in modules/default/weather/providers/openweathermap.js:430 (replaced broken hide() call with error logging)
+- [?] Address TODO in modules/default/weather/providers/weatherflow.js:105 (clarified comment - WeatherUtils handles conversion)
 
 ## Notes
 
