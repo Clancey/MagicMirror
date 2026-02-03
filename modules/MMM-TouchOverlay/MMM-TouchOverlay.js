@@ -9,6 +9,7 @@ Module.register("MMM-TouchOverlay", {
 		closeButtonSize: 48,
 		hideUITogglePosition: "bottom-right",
 		calendarDaysToShow: 14,
+		persistUIState: false, // Persist UI hidden state to localStorage
 		photoViewer: {
 			showMetadata: true,
 			slideshowPauseEnabled: true
@@ -132,6 +133,7 @@ Module.register("MMM-TouchOverlay", {
 			case "MODULE_DOM_CREATED":
 				this.attachTouchHandlers();
 				this.attachKeyboardHandler();
+				this.restoreUIState();
 				break;
 			case "NEWS_FEED":
 				this.newsItems = payload.items || [];
@@ -785,6 +787,11 @@ Module.register("MMM-TouchOverlay", {
 			this.showUI();
 		}
 
+		// Persist state to localStorage if enabled
+		if (this.config.persistUIState) {
+			this.saveUIState();
+		}
+
 		this.sendNotification("TOUCH_UI_HIDDEN", { hidden: this.uiState.hidden });
 	},
 
@@ -796,6 +803,28 @@ Module.register("MMM-TouchOverlay", {
 	showUI: function () {
 		document.body.classList.remove("ui-hidden");
 		this.updateToggleVisibility();
+	},
+
+	saveUIState: function () {
+		try {
+			localStorage.setItem("mm-touch-ui-hidden", this.uiState.hidden ? "true" : "false");
+		} catch (e) {
+			Log.warn("MMM-TouchOverlay: Could not save UI state to localStorage", e);
+		}
+	},
+
+	restoreUIState: function () {
+		if (!this.config.persistUIState) return;
+
+		try {
+			const savedState = localStorage.getItem("mm-touch-ui-hidden");
+			if (savedState === "true") {
+				this.uiState.hidden = true;
+				this.hideUI();
+			}
+		} catch (e) {
+			Log.warn("MMM-TouchOverlay: Could not restore UI state from localStorage", e);
+		}
 	},
 
 	updateToggleVisibility: function () {

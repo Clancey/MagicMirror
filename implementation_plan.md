@@ -46,7 +46,7 @@
 - [x] Add 300ms transition for hide/show
 - [x] Position toggle button (configurable: bottom-right default)
 - [x] Send TOUCH_UI_HIDDEN notification on toggle
-- [ ] Optional: persist state to localStorage
+- [?] Optional: persist state to localStorage
 
 ### News Detail View
 - [x] Listen for NEWS_FEED notification and store items
