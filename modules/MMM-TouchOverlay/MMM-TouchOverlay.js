@@ -321,6 +321,8 @@ Module.register("MMM-TouchOverlay", {
 	handleWeatherTap: function (e) {
 		if (this.weatherData) {
 			this.openOverlay("weather", this.weatherData);
+		} else {
+			this.openOverlay("weather", null);
 		}
 	},
 
@@ -532,7 +534,17 @@ Module.register("MMM-TouchOverlay", {
 	},
 
 	renderWeatherDetail: function () {
-		if (!this.weatherData || !this.weatherData.currentWeather) {
+		if (!this.weatherData) {
+			this.bodyElement.innerHTML = `
+				<div class="weather-loading">
+					<div class="weather-loading-spinner"></div>
+					<p class="weather-loading-text">Loading weather data...</p>
+				</div>
+			`;
+			return;
+		}
+
+		if (!this.weatherData.currentWeather) {
 			this.bodyElement.innerHTML = "<p>No weather data available</p>";
 			return;
 		}
