@@ -106,7 +106,7 @@
  - [x] Investigate MMM-ImmichTileSlideShow DOM structure (generic selectors implemented)
  - [x] Investigate MMM-ImmichTileSlideShow notification protocol (generic notifications sent)
  - [x] Implement attachPhotoHandlers() for slideshow images
-- [?] Implement handlePhotoTap() touch handler
+ - [x] Implement handlePhotoTap() touch handler
 - [?] Implement extractPhotoMetadata() method
 - [?] Create templates/photo-viewer.njk template (inline rendering)
 - [?] Implement renderPhotoViewer() method
