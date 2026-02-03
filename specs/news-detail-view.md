@@ -80,37 +80,37 @@ handleNewsfeedTap(event) {
 }
 ```
 
-### Template: news-detail.njk
+### DOM Structure (rendered via inline templates)
+
+The news detail view is rendered using inline JavaScript template literals in `renderNewsDetail()`. The resulting DOM structure is:
 
 ```html
 <div class="news-detail">
     <div class="news-detail-header">
-        <span class="news-source">{{ source }}</span>
-        <span class="news-date">{{ publishDate }}</span>
+        <span class="news-source">Source Name</span>
+        <span class="news-date">2 hours ago</span>
     </div>
 
-    <h1 class="news-headline">{{ headline }}</h1>
+    <h1 class="news-headline">Article Headline</h1>
 
-    {% if summary %}
     <div class="news-summary">
-        {{ summary }}
+        Article summary text...
     </div>
-    {% endif %}
 
-    {% if url %}
     <div class="news-link-indicator">
         <span class="news-link-icon">🔗</span>
-        <span class="news-link-text">{{ url | truncate(50) }}</span>
+        <span class="news-link-text">https://example.com/article...</span>
     </div>
-    {% endif %}
 
     <div class="news-navigation">
         <button class="news-nav-btn news-prev" aria-label="Previous article">‹</button>
-        <span class="news-position">{{ currentIndex + 1 }} / {{ totalItems }}</span>
+        <span class="news-position">1 / 10</span>
         <button class="news-nav-btn news-next" aria-label="Next article">›</button>
     </div>
 </div>
 ```
+
+**Note:** No external Nunjucks templates are used. All rendering is done via inline JavaScript template literals for simplicity and to avoid template engine dependencies.
 
 ### CSS
 

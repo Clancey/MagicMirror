@@ -96,84 +96,76 @@ handleWeatherTap(event) {
 }
 ```
 
-### Template: weather-detail.njk
+### DOM Structure (rendered via inline templates)
+
+The weather detail view is rendered using inline JavaScript template literals in `renderWeatherDetail()`. The resulting DOM structure is:
 
 ```html
 <div class="weather-detail">
-    <div class="weather-location">{{ location }}</div>
+    <div class="weather-location">City Name</div>
 
     <!-- Current Conditions -->
     <section class="weather-current">
         <div class="weather-current-main">
-            <span class="weather-icon wi wi-{{ weatherIcon }}"></span>
-            <span class="weather-temp-large">{{ currentTemp }}°</span>
+            <span class="weather-icon wi wi-day-sunny"></span>
+            <span class="weather-temp-large">72°</span>
         </div>
-        <div class="weather-current-desc">{{ weatherDesc }}</div>
+        <div class="weather-current-desc">Sunny</div>
         <div class="weather-current-details">
             <div class="weather-detail-item">
                 <span class="label">Feels like</span>
-                <span class="value">{{ feelsLike }}°</span>
+                <span class="value">75°</span>
             </div>
             <div class="weather-detail-item">
                 <span class="label">Humidity</span>
-                <span class="value">{{ humidity }}%</span>
+                <span class="value">45%</span>
             </div>
             <div class="weather-detail-item">
                 <span class="label">Wind</span>
-                <span class="value">{{ windSpeed }} {{ windUnit }}</span>
+                <span class="value">10 mph</span>
             </div>
-            {% if uvIndex %}
             <div class="weather-detail-item">
                 <span class="label">UV Index</span>
-                <span class="value">{{ uvIndex }}</span>
+                <span class="value">6</span>
             </div>
-            {% endif %}
-            {% if precipProb %}
             <div class="weather-detail-item">
                 <span class="label">Precip</span>
-                <span class="value">{{ precipProb }}%</span>
+                <span class="value">20%</span>
             </div>
-            {% endif %}
         </div>
     </section>
 
     <!-- Hourly Forecast -->
-    {% if hourly.length > 0 %}
     <section class="weather-hourly">
         <h2 class="weather-section-title">Hourly</h2>
         <div class="weather-hourly-scroll">
-            {% for hour in hourly %}
             <div class="weather-hour">
-                <span class="hour-time">{{ hour.time }}</span>
-                <span class="hour-icon wi wi-{{ hour.icon }}"></span>
-                <span class="hour-temp">{{ hour.temp }}°</span>
+                <span class="hour-time">1pm</span>
+                <span class="hour-icon wi wi-day-sunny"></span>
+                <span class="hour-temp">72°</span>
             </div>
-            {% endfor %}
+            <!-- More hours... -->
         </div>
     </section>
-    {% endif %}
 
     <!-- Daily Forecast -->
-    {% if forecast.length > 0 %}
     <section class="weather-forecast">
         <h2 class="weather-section-title">7-Day Forecast</h2>
         <div class="weather-forecast-list">
-            {% for day in forecast %}
             <div class="weather-day">
-                <span class="day-name">{{ day.name }}</span>
-                <span class="day-icon wi wi-{{ day.icon }}"></span>
-                <span class="day-high">{{ day.high }}°</span>
-                <span class="day-low">{{ day.low }}°</span>
-                {% if day.precip %}
-                <span class="day-precip">{{ day.precip }}%</span>
-                {% endif %}
+                <span class="day-name">Mon</span>
+                <span class="day-icon wi wi-day-sunny"></span>
+                <span class="day-high">75°</span>
+                <span class="day-low">58°</span>
+                <span class="day-precip">10%</span>
             </div>
-            {% endfor %}
+            <!-- More days... -->
         </div>
     </section>
-    {% endif %}
 </div>
 ```
+
+**Note:** No external Nunjucks templates are used. All rendering is done via inline JavaScript template literals for simplicity and to avoid template engine dependencies.
 
 ### CSS
 

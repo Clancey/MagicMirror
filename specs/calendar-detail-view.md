@@ -77,58 +77,58 @@ handleCalendarTap(event) {
 }
 ```
 
-### Template: calendar-detail.njk
+### DOM Structure (rendered via inline templates)
+
+The calendar detail view is rendered using inline JavaScript template literals in `renderCalendarDetail()`. The resulting DOM structure is:
 
 ```html
 <div class="calendar-detail">
     <h1 class="calendar-title">Upcoming Events</h1>
 
-    {% if eventsByDate | length === 0 %}
+    <!-- Empty state when no events -->
     <div class="calendar-empty">No upcoming events</div>
-    {% endif %}
 
-    {% for dateGroup in eventsByDate %}
+    <!-- Events grouped by date -->
     <section class="calendar-day">
-        <h2 class="calendar-date-header {{ dateGroup.headerClass }}">
-            {{ dateGroup.dateLabel }}
+        <h2 class="calendar-date-header today">
+            Today
         </h2>
 
         <div class="calendar-events">
-            {% for event in dateGroup.events %}
-            <div class="calendar-event {{ 'all-day' if event.fullDayEvent }} {{ 'past' if event.isPast }}"
-                 style="{% if event.color %}border-left-color: {{ event.color }}{% endif %}">
+            <div class="calendar-event all-day"
+                 style="border-left-color: #ff0000">
 
                 <div class="event-time">
-                    {% if event.fullDayEvent %}
                     <span class="all-day-badge">All Day</span>
-                    {% else %}
-                    <span class="event-start">{{ event.startTime }}</span>
-                    {% if event.endTime %}
-                    <span class="event-separator">-</span>
-                    <span class="event-end">{{ event.endTime }}</span>
-                    {% endif %}
-                    {% endif %}
                 </div>
 
                 <div class="event-details">
-                    <div class="event-title">{{ event.title }}</div>
-                    {% if event.location %}
+                    <div class="event-title">Event Title</div>
                     <div class="event-location">
                         <span class="location-icon">📍</span>
-                        {{ event.location }}
+                        123 Main St
                     </div>
-                    {% endif %}
-                    {% if event.calendarName %}
-                    <div class="event-calendar">{{ event.calendarName }}</div>
-                    {% endif %}
+                    <div class="event-calendar">Work</div>
                 </div>
             </div>
-            {% endfor %}
+
+            <div class="calendar-event past">
+                <div class="event-time">
+                    <span class="event-start">9:00 AM</span>
+                    <span class="event-separator">-</span>
+                    <span class="event-end">10:00 AM</span>
+                </div>
+
+                <div class="event-details">
+                    <div class="event-title">Meeting</div>
+                </div>
+            </div>
         </div>
     </section>
-    {% endfor %}
 </div>
 ```
+
+**Note:** No external Nunjucks templates are used. All rendering is done via inline JavaScript template literals for simplicity and to avoid template engine dependencies.
 
 ### CSS
 

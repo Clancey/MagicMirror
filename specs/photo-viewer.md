@@ -140,31 +140,27 @@ closeOverlay() {
 }
 ```
 
-### Template: photo-viewer.njk
+### DOM Structure (rendered via inline templates)
+
+The photo viewer is rendered using inline JavaScript template literals in `renderPhotoViewer()`. The resulting DOM structure is:
 
 ```html
 <div class="photo-viewer">
     <img
         class="photo-viewer-image"
-        src="{{ imageUrl }}"
-        alt="{{ metadata.filename | default('Photo') }}"
+        src="https://example.com/photo.jpg"
+        alt="photo.jpg"
     />
 
-    {% if metadata.date or metadata.album or metadata.filename %}
     <div class="photo-metadata">
-        {% if metadata.date %}
-        <span class="photo-date">{{ metadata.date }}</span>
-        {% endif %}
-        {% if metadata.album %}
-        <span class="photo-album">{{ metadata.album }}</span>
-        {% endif %}
-        {% if metadata.filename %}
-        <span class="photo-filename">{{ metadata.filename }}</span>
-        {% endif %}
+        <span class="photo-date">January 15, 2024</span>
+        <span class="photo-album">Vacation</span>
+        <span class="photo-filename">photo.jpg</span>
     </div>
-    {% endif %}
 </div>
 ```
+
+**Note:** No external Nunjucks templates are used. All rendering is done via inline JavaScript template literals for simplicity and to avoid template engine dependencies.
 
 ### CSS
 
