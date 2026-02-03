@@ -40,7 +40,7 @@ npm run config:check
 
 ## Project Structure
 
-```
+```text
 MagicMirror/
 ├── config/config.js          # Main configuration
 ├── css/main.css              # Global styles
@@ -54,22 +54,25 @@ MagicMirror/
 ## Error Handling
 
 ### Build Errors
+
 1. Read error message carefully
 2. Check for missing dependencies (`npm install`)
 3. Validate config syntax (`npm run config:check`)
 4. If stuck 3 times, mark task as `[B]` blocked with reason and move on
 
 ### Test Failures
+
 - Fix failing tests before proceeding to next task
 - Do not mark task complete if tests fail
 
 ### File Not Found
+
 - Use `glob` or `list_directory` to locate files
 - Check both `modules/default/` and `modules/` for module code
 
 ## Task Selection Workflow
 
-```
+```text
 1. Read IMPLEMENTATION_PLAN.md
 2. Find first `[?]` task → verify it works → mark `[x]` if good
 3. Find first incomplete `[ ]` task
@@ -84,28 +87,32 @@ MagicMirror/
 ## Project-Specific Rules
 
 ### MagicMirror Module Development
+
 - **Do not modify core files** in `js/` unless absolutely necessary
 - **Create new modules** in `modules/` directory for new functionality
 - **Use MM notification system** for inter-module communication
 - **CSS changes** go in module-specific CSS or `css/custom.css`
 
 ### Touch Interface Rules
+
 - All touch targets must be **minimum 48x48 px**
 - Use **single tap** as primary action (no hover states)
 - Overlays must have **visible close control** (top-right)
 - Use **dark translucent backdrop** (`rgba(0,0,0,0.8)`) for overlays
 
 ### Configuration
+
 - Never commit `config/config.js` with sensitive data
 - Use `config/config.js.sample` for examples
 
 ### Module Communication
+
 ```javascript
 // Send notification to other modules
 this.sendNotification("NOTIFICATION_NAME", payload);
 
 // Receive notifications
-notificationReceived: function(notification, payload, sender) {
+notificationReceived: function (notification, payload, sender) {
   if (notification === "NOTIFICATION_NAME") {
     // Handle it
   }
@@ -114,7 +121,7 @@ notificationReceived: function(notification, payload, sender) {
 
 ## Commit Message Format
 
-```
+```text
 feat(module): short description
 
 - Detail of change 1
@@ -126,6 +133,7 @@ Types: `feat`, `fix`, `refactor`, `style`, `docs`, `test`
 ## Verification Checklist
 
 Before marking any task `[?]`:
+
 - [ ] Code runs without errors
 - [ ] Touch interactions work (if applicable)
 - [ ] Overlay opens and closes properly (if applicable)

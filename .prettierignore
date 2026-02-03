@@ -7,3 +7,5 @@
 package-lock.json
 **.ics
 /specs
+/agents.md
+/prompt.md

@@ -11,7 +11,7 @@ Provide a global toggle button that hides all interface modules, allowing users 
 - Tapping toggle hides all modules except the background slideshow
 - A small "Show UI" control remains visible when UI is hidden
 - Tapping "Show UI" restores all modules
-- State persists across page reloads (optional)
+- State can persist across page reloads via `persistUIState` config
 - Smooth transition when hiding/showing
 
 ### Non-Functional
@@ -76,7 +76,7 @@ toggleUI() {
         this.showUI();
     }
 
-    // Persist state (optional)
+    // Persist state
     if (this.config.persistUIState) {
         localStorage.setItem("mm-touch-ui-hidden", this.uiState.hidden);
     }
@@ -137,16 +137,24 @@ getDom() {
     wrapper.appendChild(toggleBtn);
     wrapper.appendChild(showBtn);
 
-    // Restore persisted state
-    if (this.config.persistUIState) {
-        const savedState = localStorage.getItem("mm-touch-ui-hidden");
-        if (savedState === "true") {
-            this.uiState.hidden = true;
-            this.hideUI();
-        }
-    }
-
     return wrapper;
+}
+
+// Restore persisted state on MODULE_DOM_CREATED
+notificationReceived: function(notification, payload, sender) {
+    if (notification === "MODULE_DOM_CREATED") {
+        this.restoreUIState();
+    }
+},
+
+restoreUIState: function() {
+    if (!this.config.persistUIState) return;
+
+    const savedState = localStorage.getItem("mm-touch-ui-hidden");
+    if (savedState === "true") {
+        this.uiState.hidden = true;
+        this.hideUI();
+    }
 }
 ```
 
@@ -257,12 +265,9 @@ body.ui-hidden .touch-overlay {
 {
     module: "MMM-TouchOverlay",
     config: {
-        hideUIToggle: {
-            enabled: true,                    // Show the toggle button
-            position: "bottom-right",         // Button position
-            persistState: false,              // Remember state across reloads
-            autoHideDelay: 0                  // Auto-hide UI after X seconds (0 = disabled)
-        }
+        hideUITogglePosition: "bottom-right", // Button position
+        persistUIState: false,                // Remember state across reloads
+        autoHideDelay: 60                     // Auto-hide UI after X seconds (0 to disable)
     }
 }
 ```
@@ -283,29 +288,38 @@ applyPosition(button, position) {
 }
 ```
 
-### Auto-Hide Feature (Optional)
+### Auto-Hide Feature
 
 ```javascript
-// Optional: automatically hide UI after period of inactivity
-setupAutoHide() {
-    if (!this.config.hideUIToggle?.autoHideDelay) return;
+// Automatically hide UI after period of inactivity
+startInactivityTimer: function() {
+    if (this.config.autoHideDelay <= 0) return;
 
-    let timeout;
+    this.inactivityState.lastActivity = Date.now();
 
-    const resetTimer = () => {
-        clearTimeout(timeout);
-        if (!this.uiState.hidden) {
-            timeout = setTimeout(() => {
-                this.hideUI();
-            }, this.config.hideUIToggle.autoHideDelay * 1000);
+    // Check for inactivity every second
+    this.inactivityState.timerId = setInterval(() => {
+        const now = Date.now();
+        const elapsed = (now - this.inactivityState.lastActivity) / 1000;
+
+        if (elapsed >= this.config.autoHideDelay && !this.uiState.hidden) {
+            this.toggleUI();
         }
-    };
+    }, 1000);
+},
 
-    // Reset timer on any interaction
-    document.addEventListener("touchstart", resetTimer);
-    document.addEventListener("mousemove", resetTimer);
+recordActivity: function() {
+    this.inactivityState.lastActivity = Date.now();
+},
 
-    resetTimer();
+attachActivityListeners: function() {
+    const events = ["touchstart", "click", "mousemove"];
+
+    events.forEach(eventType => {
+        document.addEventListener(eventType, () => {
+            this.recordActivity();
+        }, { passive: true });
+    });
 }
 ```
 
