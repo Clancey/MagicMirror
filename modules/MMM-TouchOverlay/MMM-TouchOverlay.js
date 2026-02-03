@@ -318,8 +318,145 @@ Module.register("MMM-TouchOverlay", {
 		this.attachNewsNavigationHandlers();
 	},
 
+	// Weather detail methods
+	getWeatherIcon: function (weatherType) {
+		const iconMap = {
+			"day-sunny": "☀️",
+			"day-cloudy": "⛅",
+			"cloudy": "☁️",
+			"rain": "🌧️",
+			"snow": "❄️",
+			"thunderstorm": "⛈️",
+			"fog": "🌫️",
+			"wind": "💨"
+		};
+		return iconMap[weatherType] || "🌡️";
+	},
+
+	formatTemp: function (temp) {
+		return Math.round(temp);
+	},
+
+	formatWind: function (speed) {
+		if (this.config.units === "imperial") {
+			return Math.round(speed);
+		}
+		return Math.round(speed);
+	},
+
 	renderWeatherDetail: function () {
-		this.bodyElement.innerHTML = "<p>Weather detail view - to be implemented</p>";
+		if (!this.weatherData || !this.weatherData.currentWeather) {
+			this.bodyElement.innerHTML = "<p>No weather data available</p>";
+			return;
+		}
+
+		const current = this.weatherData.currentWeather;
+		const hourly = this.weatherData.hourlyArray || [];
+		const forecast = this.weatherData.forecastArray || [];
+		const location = this.weatherData.locationName || "Unknown Location";
+
+		const formatTime = (date) => {
+			const d = new Date(date);
+			return d.toLocaleTimeString("en-US", { hour: "numeric", hour12: true });
+		};
+
+		const formatDayName = (date) => {
+			const d = new Date(date);
+			return d.toLocaleDateString("en-US", { weekday: "short" });
+		};
+
+		const windUnit = this.config.units === "imperial" ? "mph" : "km/h";
+
+		let html = `
+			<div class="weather-detail">
+				<div class="weather-location">${location}</div>
+
+				<section class="weather-current">
+					<div class="weather-current-main">
+						<span class="weather-icon">${this.getWeatherIcon(current.weatherType)}</span>
+						<span class="weather-temp-large">${this.formatTemp(current.temperature)}°</span>
+					</div>
+					<div class="weather-current-desc">${current.weatherType || "Unknown"}</div>
+					<div class="weather-current-details">
+						<div class="weather-detail-item">
+							<span class="label">Feels like</span>
+							<span class="value">${this.formatTemp(current.feelsLike)}°</span>
+						</div>
+						<div class="weather-detail-item">
+							<span class="label">Humidity</span>
+							<span class="value">${current.humidity || 0}%</span>
+						</div>
+						<div class="weather-detail-item">
+							<span class="label">Wind</span>
+							<span class="value">${this.formatWind(current.windSpeed)} ${windUnit}</span>
+						</div>
+						${current.uvIndex ? `
+						<div class="weather-detail-item">
+							<span class="label">UV Index</span>
+							<span class="value">${current.uvIndex}</span>
+						</div>` : ""}
+						${current.precipitationProbability ? `
+						<div class="weather-detail-item">
+							<span class="label">Precip</span>
+							<span class="value">${current.precipitationProbability}%</span>
+						</div>` : ""}
+					</div>
+				</section>
+		`;
+
+		if (hourly.length > 0) {
+			html += `
+				<section class="weather-hourly">
+					<h2 class="weather-section-title">Hourly</h2>
+					<div class="weather-hourly-scroll">
+			`;
+
+			hourly.slice(0, 12).forEach(hour => {
+				html += `
+					<div class="weather-hour">
+						<span class="hour-time">${formatTime(hour.date)}</span>
+						<span class="hour-icon">${this.getWeatherIcon(hour.weatherType)}</span>
+						<span class="hour-temp">${this.formatTemp(hour.temperature)}°</span>
+					</div>
+				`;
+			});
+
+			html += `
+					</div>
+				</section>
+			`;
+		}
+
+		if (forecast.length > 0) {
+			html += `
+				<section class="weather-forecast">
+					<h2 class="weather-section-title">7-Day Forecast</h2>
+					<div class="weather-forecast-list">
+			`;
+
+			forecast.slice(0, 7).forEach(day => {
+				const precipHtml = day.precipitationProbability ?
+					`<span class="day-precip">${day.precipitationProbability}%</span>` : "";
+
+				html += `
+					<div class="weather-day">
+						<span class="day-name">${formatDayName(day.date)}</span>
+						<span class="day-icon">${this.getWeatherIcon(day.weatherType)}</span>
+						<span class="day-high">${this.formatTemp(day.maxTemperature)}°</span>
+						<span class="day-low">${this.formatTemp(day.minTemperature)}°</span>
+						${precipHtml}
+					</div>
+				`;
+			});
+
+			html += `
+					</div>
+				</section>
+			`;
+		}
+
+		html += `</div>`;
+		this.bodyElement.innerHTML = html;
 	},
 
 	// Calendar detail methods

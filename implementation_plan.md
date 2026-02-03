@@ -83,24 +83,24 @@
 - [?] Add calendar detail CSS styles
 
 ### Weather Detail View
-- [ ] Listen for WEATHER_UPDATED notification and store data
-- [ ] Implement handleWeatherTap() touch handler
-- [ ] Create templates/weather-detail.njk template
-- [ ] Implement renderWeatherDetail() method
-- [ ] Implement getWeatherIcon() mapping method
-- [ ] Implement formatTemp() for unit conversion
-- [ ] Implement formatWind() for unit conversion
-- [ ] Display current temperature prominently
-- [ ] Display feels-like temperature
-- [ ] Display humidity percentage
-- [ ] Display wind speed with appropriate units
+- [?] Listen for WEATHER_UPDATED notification and store data
+- [?] Implement handleWeatherTap() touch handler
+- [?] Create templates/weather-detail.njk template
+- [?] Implement renderWeatherDetail() method
+- [?] Implement getWeatherIcon() mapping method
+- [?] Implement formatTemp() for unit conversion
+- [?] Implement formatWind() for unit conversion
+- [?] Display current temperature prominently
+- [?] Display feels-like temperature
+- [?] Display humidity percentage
+- [?] Display wind speed with appropriate units
 - [ ] Display weather icon for current conditions
 - [ ] Display hourly forecast (next 12 hours)
 - [ ] Add horizontal scroll for hourly forecast
 - [ ] Display daily forecast (7 days) with high/low
 - [ ] Display precipitation probability when available
 - [ ] Display UV index when available
-- [ ] Add weather detail CSS styles
+- [?] Add weather detail CSS styles
 
 ### Photo Viewer
 - [ ] Investigate MMM-ImmichTileSlideShow DOM structure
