@@ -48,8 +48,7 @@ Module.register("MMM-TouchOverlay", {
 
 	// Calendar detail state
 	calendarData: {
-		events: [],
-		daysToShow: this.config.calendarDaysToShow || 14
+		events: []
 	},
 
 	// Photo viewer state
@@ -742,7 +741,7 @@ Module.register("MMM-TouchOverlay", {
 	renderCalendarDetail: function () {
 		const eventsByDate = this.groupEventsByDate(
 			this.calendarData.events,
-			this.calendarData.daysToShow
+			this.config.calendarDaysToShow
 		);
 
 		if (eventsByDate.length === 0) {
