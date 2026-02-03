@@ -109,7 +109,7 @@
  - [x] Implement handlePhotoTap() touch handler
  - [x] Implement extractPhotoMetadata() method
  - [ ] Create templates/photo-viewer.njk template (inline rendering) - no template file present
-- [?] Implement renderPhotoViewer() method
+ - [x] Implement renderPhotoViewer() method
 - [?] Display photo scaled to fit (object-fit: contain)
 - [?] Display metadata (date, album, filename) when available
 - [?] Implement pauseSlideshow() notification
