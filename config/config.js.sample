@@ -104,6 +104,23 @@ let config = {
 				broadcastNewsUpdates: true
 			}
 		},
+		{
+			module: "MMM-TouchOverlay",
+			position: "fullscreen_below",
+			config: {
+				animationSpeed: 200,
+				backdropOpacity: 0.8,
+				closeButtonSize: 48,
+				hideUITogglePosition: "bottom-right",
+				calendarDaysToShow: 14,
+				persistUIState: false,
+				autoHideDelay: 60,
+				photoViewer: {
+					showMetadata: true,
+					slideshowPauseEnabled: true
+				}
+			}
+		}
 	]
 };
 
