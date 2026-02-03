@@ -439,4 +439,304 @@ describe("MMM-TouchOverlay e2e tests", () => {
 			expect(result).toBeDefined();
 		});
 	});
+
+	describe("UI hide/show toggle", () => {
+		beforeAll(async () => {
+			await helpers.startApplication(TOUCHOVERLAY_CONFIG);
+			await helpers.getDocument();
+			page = helpers.getPage();
+			await page.waitForTimeout(1000);
+		});
+
+		beforeEach(async () => {
+			// Ensure UI is visible before each test
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						if (module.uiState.hidden) {
+							module.showUI();
+							module.uiState.hidden = false;
+						}
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(100);
+		});
+
+		it("should render toggle button", async () => {
+			const toggleBtn = page.locator(".touch-ui-toggle");
+			await expect(toggleBtn).toHaveCount(1);
+			await expect(toggleBtn).toHaveAttribute("aria-label", "Hide interface");
+		});
+
+		it("should render show button (initially hidden)", async () => {
+			const showBtn = page.locator(".touch-ui-show");
+			await expect(showBtn).toHaveCount(1);
+			await expect(showBtn).toHaveAttribute("aria-label", "Show interface");
+		});
+
+		it("toggle button should be at least 48x48px", async () => {
+			const toggleBtn = page.locator(".touch-ui-toggle");
+			await expect(toggleBtn).toBeVisible();
+			const box = await toggleBtn.boundingBox();
+			expect(box).not.toBeNull();
+			expect(box.width).toBeGreaterThanOrEqual(48);
+			expect(box.height).toBeGreaterThanOrEqual(48);
+		});
+
+		it("should hide UI when toggle button is clicked", async () => {
+			const toggleBtn = page.locator(".touch-ui-toggle");
+			await toggleBtn.click();
+			await page.waitForTimeout(400);
+
+			// Check body has ui-hidden class
+			const hasClass = await page.evaluate(() => {
+				return document.body.classList.contains("ui-hidden");
+			});
+			expect(hasClass).toBe(true);
+
+			// Check uiState
+			const isHidden = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.uiState.hidden;
+					}
+				}
+				return null;
+			});
+			expect(isHidden).toBe(true);
+		});
+
+		it("should show UI when show button is clicked", async () => {
+			// First hide the UI
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.uiState.hidden = true;
+						module.hideUI();
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(100);
+
+			// Now click show button
+			const showBtn = page.locator(".touch-ui-show");
+			await showBtn.click();
+			await page.waitForTimeout(400);
+
+			// Check body does not have ui-hidden class
+			const hasClass = await page.evaluate(() => {
+				return document.body.classList.contains("ui-hidden");
+			});
+			expect(hasClass).toBe(false);
+		});
+
+		it("should swap button visibility when UI is toggled", async () => {
+			// Initially toggle button should be visible, show button hidden
+			const toggleBtn = page.locator(".touch-ui-toggle");
+			const showBtn = page.locator(".touch-ui-show");
+
+			await expect(toggleBtn).toBeVisible();
+
+			// Hide UI
+			await toggleBtn.click();
+			await page.waitForTimeout(400);
+
+			// Now show button should be visible, toggle button hidden
+			await expect(showBtn).toBeVisible();
+
+			// Show UI again
+			await showBtn.click();
+			await page.waitForTimeout(400);
+
+			// Toggle button visible again
+			await expect(toggleBtn).toBeVisible();
+		});
+
+		it("should send TOUCH_UI_HIDDEN notification on toggle", async () => {
+			// Set up notification listener
+			await page.evaluate(() => {
+				window.testNotifications = [];
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						if (!module._sendNotificationWrapped) {
+							const originalSendNotification = module.sendNotification.bind(module);
+							module.sendNotification = (notification, payload) => {
+								window.testNotifications.push({ notification, payload });
+								originalSendNotification(notification, payload);
+							};
+							module._sendNotificationWrapped = true;
+						}
+						break;
+					}
+				}
+			});
+
+			// Clear notifications
+			await page.evaluate(() => {
+				window.testNotifications = [];
+			});
+
+			const toggleBtn = page.locator(".touch-ui-toggle");
+			await toggleBtn.click();
+			await page.waitForTimeout(400);
+
+			const result = await page.evaluate(() => {
+				return window.testNotifications.find((n) => n.notification === "TOUCH_UI_HIDDEN");
+			});
+
+			expect(result).toBeDefined();
+			expect(result.payload).toHaveProperty("hidden", true);
+		});
+	});
+
+	describe("persistUIState localStorage flow", () => {
+		beforeAll(async () => {
+			// Use a config with persistUIState enabled
+			await helpers.startApplication(TOUCHOVERLAY_CONFIG);
+			await helpers.getDocument();
+			page = helpers.getPage();
+			await page.waitForTimeout(1000);
+		});
+
+		beforeEach(async () => {
+			// Clear localStorage and reset UI state before each test
+			await page.evaluate(() => {
+				localStorage.removeItem("mm-touch-ui-hidden");
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.uiState.hidden = false;
+						module.showUI();
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(100);
+		});
+
+		it("should not save state when persistUIState is false", async () => {
+			// The default config has persistUIState: false
+			const toggleBtn = page.locator(".touch-ui-toggle");
+			await toggleBtn.click();
+			await page.waitForTimeout(400);
+
+			const savedState = await page.evaluate(() => {
+				return localStorage.getItem("mm-touch-ui-hidden");
+			});
+
+			// Should be null since persistUIState is false in default config
+			expect(savedState).toBeNull();
+		});
+
+		it("should save state when persistUIState is enabled", async () => {
+			// Enable persistUIState temporarily
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.persistUIState = true;
+						break;
+					}
+				}
+			});
+
+			const toggleBtn = page.locator(".touch-ui-toggle");
+			await toggleBtn.click();
+			await page.waitForTimeout(400);
+
+			const savedState = await page.evaluate(() => {
+				return localStorage.getItem("mm-touch-ui-hidden");
+			});
+
+			expect(savedState).toBe("true");
+
+			// Restore config
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.persistUIState = false;
+						break;
+					}
+				}
+			});
+		});
+
+		it("should restore hidden state from localStorage", async () => {
+			// Enable persistUIState and set localStorage
+			await page.evaluate(() => {
+				localStorage.setItem("mm-touch-ui-hidden", "true");
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.persistUIState = true;
+						module.restoreUIState();
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(100);
+
+			// Check that UI is hidden
+			const isHidden = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.uiState.hidden;
+					}
+				}
+				return null;
+			});
+
+			expect(isHidden).toBe(true);
+
+			// Restore config
+			await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.persistUIState = false;
+						break;
+					}
+				}
+			});
+		});
+
+		it("should not restore state when persistUIState is false", async () => {
+			// Set localStorage but keep persistUIState false
+			await page.evaluate(() => {
+				localStorage.setItem("mm-touch-ui-hidden", "true");
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						module.config.persistUIState = false;
+						module.uiState.hidden = false;
+						module.restoreUIState();
+						break;
+					}
+				}
+			});
+			await page.waitForTimeout(100);
+
+			// Check that UI is still visible (not restored)
+			const isHidden = await page.evaluate(() => {
+				const modules = MM.getModules();
+				for (const module of modules) {
+					if (module.name === "MMM-TouchOverlay") {
+						return module.uiState.hidden;
+					}
+				}
+				return null;
+			});
+
+			expect(isHidden).toBe(false);
+		});
+	});
 });
