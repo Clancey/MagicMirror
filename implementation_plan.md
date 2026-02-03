@@ -107,7 +107,7 @@
  - [x] Investigate MMM-ImmichTileSlideShow notification protocol (generic notifications sent)
  - [x] Implement attachPhotoHandlers() for slideshow images
  - [x] Implement handlePhotoTap() touch handler
-- [?] Implement extractPhotoMetadata() method
+ - [x] Implement extractPhotoMetadata() method
 - [?] Create templates/photo-viewer.njk template (inline rendering)
 - [?] Implement renderPhotoViewer() method
 - [?] Display photo scaled to fit (object-fit: contain)
