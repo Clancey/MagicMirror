@@ -431,7 +431,8 @@ const Module = Class.extend({
  * -> object in object and array is not merging
  * -------
  *
- * Todo: idea of Mich determinate what do you want to merge or not
+ * Note: A potential future enhancement could allow specifying which properties
+ * to merge or exclude, giving modules more control over the merge behavior.
  * @param {object} result the initial object
  * @returns {object} the merged config
  */

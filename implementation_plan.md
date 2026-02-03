@@ -189,7 +189,7 @@
 - [x] Address FIXME in modules/default/calendar/calendarfetcherutils.js:131 (clarified comment explaining Facebook birthday workaround)
 - [x] Address TODO in modules/default/weather/providers/openweathermap.js:430 (replaced broken hide() call with error logging)
 - [x] Address TODO in modules/default/weather/providers/weatherflow.js:105 (clarified comment - WeatherUtils handles conversion)
-- [ ] Resolve TODO comment in js/module.js:434 (configMerge documentation)
+- [?] Resolve TODO comment in js/module.js:434 (clarified as potential future enhancement)
 - [ ] Remove/update stale placeholder comments in modules/MMM-TouchOverlay/MMM-TouchOverlay.js
 
 ## Notes
