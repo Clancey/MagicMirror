@@ -103,19 +103,19 @@
 - [x] Add weather detail CSS styles
 
 ### Photo Viewer
-- [ ] Investigate MMM-ImmichTileSlideShow DOM structure
-- [ ] Investigate MMM-ImmichTileSlideShow notification protocol
-- [ ] Implement attachPhotoHandlers() for slideshow images
-- [ ] Implement handlePhotoTap() touch handler
-- [ ] Implement extractPhotoMetadata() method
-- [ ] Create templates/photo-viewer.njk template
-- [ ] Implement renderPhotoViewer() method
-- [ ] Display photo scaled to fit (object-fit: contain)
-- [ ] Display metadata (date, album, filename) when available
-- [ ] Implement pauseSlideshow() notification
-- [ ] Implement resumeSlideshow() notification
-- [ ] Resume slideshow on closeOverlay when viewing photo
-- [ ] Add photo viewer CSS styles
+- [?] Investigate MMM-ImmichTileSlideShow DOM structure (generic selectors implemented)
+- [?] Investigate MMM-ImmichTileSlideShow notification protocol (generic notifications sent)
+- [?] Implement attachPhotoHandlers() for slideshow images
+- [?] Implement handlePhotoTap() touch handler
+- [?] Implement extractPhotoMetadata() method
+- [?] Create templates/photo-viewer.njk template (inline rendering)
+- [?] Implement renderPhotoViewer() method
+- [?] Display photo scaled to fit (object-fit: contain)
+- [?] Display metadata (date, album, filename) when available
+- [?] Implement pauseSlideshow() notification
+- [?] Implement resumeSlideshow() notification
+- [?] Resume slideshow on closeOverlay when viewing photo
+- [?] Add photo viewer CSS styles
 - [ ] Optional: preloadImage() for smoother experience
 
 ## Low Priority
@@ -123,7 +123,7 @@
 ### Configuration & Polish
 - [x] Add configuration options for animationSpeed, backdropOpacity
 - [x] Add configuration for hideUIToggle position
-- [ ] Add configuration for photoViewer.showMetadata
+- [?] Add configuration for photoViewer.showMetadata
 - [x] Add configuration for calendar daysToShow
 - [x] Document module configuration in README
 - [ ] Test on touch-capable display

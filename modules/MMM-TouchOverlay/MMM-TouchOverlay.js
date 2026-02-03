@@ -8,7 +8,11 @@ Module.register("MMM-TouchOverlay", {
 		backdropOpacity: 0.8,
 		closeButtonSize: 48,
 		hideUITogglePosition: "bottom-right",
-		calendarDaysToShow: 14
+		calendarDaysToShow: 14,
+		photoViewer: {
+			showMetadata: true,
+			slideshowPauseEnabled: true
+		}
 	},
 
 	// Internal state
@@ -38,6 +42,13 @@ Module.register("MMM-TouchOverlay", {
 	calendarData: {
 		events: [],
 		daysToShow: this.config.calendarDaysToShow || 14
+	},
+
+	// Photo viewer state
+	photoData: {
+		currentImage: null,
+		metadata: null,
+		slideshowPaused: false
 	},
 
 	getStyles: function () {
@@ -155,7 +166,31 @@ Module.register("MMM-TouchOverlay", {
 			calendar.addEventListener("click", (e) => this.handleCalendarTap(e));
 		}
 
+		// Photo slideshow handlers
+		this.attachPhotoHandlers();
+
 		Log.info("MMM-TouchOverlay: Touch handlers attached");
+	},
+
+	attachPhotoHandlers: function () {
+		// Listen for clicks on slideshow images with event delegation
+		document.addEventListener("click", (e) => {
+			if (this.overlayState.isOpen) return;
+
+			// Look for common slideshow image selectors
+			const img = e.target.closest(
+				".MMM-ImmichTileSlideShow img, " +
+				"[class*='slideshow'] img, " +
+				".background img, " +
+				".fullscreen_below img, " +
+				".fullscreen_above img"
+			);
+
+			if (img) {
+				e.stopPropagation();
+				this.handlePhotoTap(img);
+			}
+		});
 	},
 
 	attachKeyboardHandler: function () {
@@ -194,9 +229,14 @@ Module.register("MMM-TouchOverlay", {
 		this.hideOverlay();
 		this.sendNotification("TOUCH_OVERLAY_CLOSE", {});
 
+		// Reset data-content attribute
+		if (this.overlayElement) {
+			this.overlayElement.removeAttribute("data-content");
+		}
+
 		// Resume slideshow if we were viewing a photo
 		if (wasPhoto) {
-			this.sendNotification("SLIDESHOW_RESUME", {});
+			this.resumeSlideshow();
 		}
 	},
 
@@ -264,6 +304,72 @@ Module.register("MMM-TouchOverlay", {
 		if (this.calendarEvents.length > 0) {
 			this.openOverlay("calendar", this.calendarEvents);
 		}
+	},
+
+	handlePhotoTap: function (imgElement) {
+		const imageUrl = imgElement.src || imgElement.dataset.src;
+		if (!imageUrl) return;
+
+		const metadata = this.extractPhotoMetadata(imgElement);
+
+		// Pause slideshow if enabled
+		if (this.config.photoViewer?.slideshowPauseEnabled !== false) {
+			this.pauseSlideshow();
+		}
+
+		this.photoData = {
+			currentImage: imageUrl,
+			metadata: metadata,
+			slideshowPaused: true
+		};
+
+		this.openOverlay("photo", this.photoData);
+	},
+
+	extractPhotoMetadata: function (imgElement) {
+		// Try to extract metadata from data attributes or parent elements
+		const container = imgElement.closest("[data-photo-info]") ||
+						  imgElement.closest("[data-date]") ||
+						  imgElement.parentElement;
+
+		return {
+			date: imgElement.dataset.date || container?.dataset?.date || null,
+			album: imgElement.dataset.album || container?.dataset?.album || null,
+			filename: imgElement.alt || imgElement.dataset.filename ||
+					  this.extractFilenameFromUrl(imgElement.src) || null
+		};
+	},
+
+	extractFilenameFromUrl: function (url) {
+		if (!url) return null;
+		try {
+			const pathname = new URL(url).pathname;
+			return pathname.split("/").pop() || null;
+		} catch (e) {
+			return null;
+		}
+	},
+
+	pauseSlideshow: function () {
+		if (this.photoData.slideshowPaused) return;
+
+		// Send common slideshow pause notifications
+		this.sendNotification("SLIDESHOW_PAUSE", {});
+		this.sendNotification("REMOTE_ACTION", { action: "PAUSE" });
+
+		this.photoData.slideshowPaused = true;
+		Log.info("MMM-TouchOverlay: Requested slideshow pause");
+	},
+
+	resumeSlideshow: function () {
+		if (!this.photoData.slideshowPaused) return;
+
+		// Send common slideshow resume notifications
+		this.sendNotification("SLIDESHOW_RESUME", {});
+		this.sendNotification("REMOTE_ACTION", { action: "PLAY" });
+
+		this.photoData.slideshowPaused = false;
+		Log.info("MMM-TouchOverlay: Requested slideshow resume");
 	},
 
 	// Placeholder render methods - to be implemented in detail view tasks
@@ -620,7 +726,42 @@ Module.register("MMM-TouchOverlay", {
 	},
 
 	renderPhotoViewer: function () {
-		this.bodyElement.innerHTML = "<p>Photo viewer - to be implemented</p>";
+		if (!this.photoData.currentImage) {
+			this.bodyElement.innerHTML = "<p>No photo available</p>";
+			return;
+		}
+
+		const showMetadata = this.config.photoViewer?.showMetadata !== false;
+		const metadata = this.photoData.metadata;
+		const hasMetadata = showMetadata && metadata &&
+						   (metadata.date || metadata.album || metadata.filename);
+
+		let metadataHtml = "";
+		if (hasMetadata) {
+			metadataHtml = `
+				<div class="photo-metadata">
+					${metadata.date ? `<span class="photo-date">${metadata.date}</span>` : ""}
+					${metadata.album ? `<span class="photo-album">${metadata.album}</span>` : ""}
+					${metadata.filename ? `<span class="photo-filename">${metadata.filename}</span>` : ""}
+				</div>
+			`;
+		}
+
+		this.bodyElement.innerHTML = `
+			<div class="photo-viewer">
+				<img
+					class="photo-viewer-image"
+					src="${this.photoData.currentImage}"
+					alt="${metadata?.filename || "Photo"}"
+				/>
+				${metadataHtml}
+			</div>
+		`;
+
+		// Set data attribute on overlay for photo-specific styling
+		if (this.overlayElement) {
+			this.overlayElement.setAttribute("data-content", "photo");
+		}
 	},
 
 	// UI Toggle Methods
