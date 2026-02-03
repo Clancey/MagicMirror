@@ -49,6 +49,8 @@
 - [x] Show precipitation/UV values when available even if zero
 - [x] Add automated tests for MMM-TouchOverlay core flows (added tests for news navigation, defaults, photoData, calendarData, inactivityState)
 - [x] Reconcile spec template requirement with inline rendering (updated specs to show DOM structure instead of .njk templates)
+- [ ] Align hide UI toggle configuration with spec (support hideUIToggle.enabled/persistState/autoHideDelay or update specs/config docs accordingly)
+- [ ] Decide metric wind unit behavior (km/h per spec vs m/s per MagicMirror) and align implementation/specs
 
 ### Test Coverage
 
@@ -57,6 +59,9 @@
 - [x] Add tests for weather detail rendering (loading state, hourly/forecast bounds, precip/UV display)
 - [x] Add tests for photo viewer flows (preload, pause/resume notifications, metadata rendering)
 - [x] Add tests for inactivity auto-hide behavior (timer start/stop, recordActivity, auto-hide after timeout)
+- [ ] Add e2e tests for calendar detail overlay rendering (grouped dates, empty state, past event dimming)
+- [ ] Add e2e tests for Escape key closing overlay
+- [ ] Add e2e tests for news navigation buttons (prev/next disable at boundaries) and swipe navigation
 
 ### Hide UI Toggle
 
