@@ -1,0 +1,97 @@
+/* MMM-TouchOverlay Styles */
+
+.touch-overlay-wrapper {
+	/* Wrapper doesn't need positioning - overlay is fixed */
+}
+
+.touch-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 9999;
+	display: none;
+	opacity: 0;
+	transition: opacity 200ms ease-in-out;
+}
+
+.touch-overlay[data-visible="true"] {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.touch-overlay.visible {
+	opacity: 1;
+}
+
+.touch-overlay-backdrop {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.8);
+}
+
+.touch-overlay-content {
+	position: relative;
+	max-width: 90vw;
+	max-height: 90vh;
+	background: rgba(0, 0, 0, 0.9);
+	border-radius: 8px;
+	overflow: auto;
+	z-index: 1;
+}
+
+.touch-overlay-close {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 48px;
+	height: 48px;
+	min-width: 48px;
+	min-height: 48px;
+	background: transparent;
+	border: none;
+	color: white;
+	font-size: 32px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.touch-overlay-close:focus {
+	outline: 2px solid white;
+	outline-offset: 2px;
+}
+
+.touch-overlay-close:active {
+	opacity: 0.7;
+}
+
+.touch-overlay-body {
+	padding: 24px;
+	padding-top: 56px; /* Space for close button */
+	color: white;
+	min-width: 300px;
+}
+
+/* Make existing modules touchable */
+.newsfeed,
+.weather,
+.calendar {
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+}
+
+/* Touch feedback for modules */
+.newsfeed:active,
+.weather:active,
+.calendar:active {
+	opacity: 0.8;
+}

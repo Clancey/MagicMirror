@@ -1,0 +1,41 @@
+{
+  "provider": "Claude",
+  "claudeModel": "opus",
+  "codexModel": null,
+  "copilotModel": null,
+  "geminiModel": null,
+  "cursorModel": null,
+  "openCodeModel": null,
+  "ollamaUrl": null,
+  "ollamaModel": null,
+  "executablePath": null,
+  "multiModel": {
+    "models": [
+      {
+        "provider": "Claude",
+        "model": "opus",
+        "baseUrl": null,
+        "label": "opus",
+        "executablePath": null
+      },
+      {
+        "provider": "Codex",
+        "model": "gpt-5.2-codex",
+        "baseUrl": null,
+        "label": "gpt-5.2-codex",
+        "executablePath": null
+      },
+      {
+        "provider": "OpenCode",
+        "model": "zai-coding-plan/glm-4.7",
+        "baseUrl": null,
+        "label": "zai-coding-plan/glm-4.7",
+        "executablePath": null
+      }
+    ],
+    "strategy": "RoundRobin",
+    "verification": null,
+    "rotateEveryN": 1
+  },
+  "lastUpdated": "2026-02-03T18:35:10.991787Z"
+}
