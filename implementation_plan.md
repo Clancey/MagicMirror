@@ -116,7 +116,7 @@
  - [x] Implement resumeSlideshow() notification
  - [x] Resume slideshow on closeOverlay when viewing photo
  - [x] Add photo viewer CSS styles
- - [?] Optional: preloadImage() for smoother experience
+ - [x] Optional: preloadImage() for smoother experience
 
 ## Low Priority
 
@@ -136,10 +136,10 @@
 - [x] Test keyboard navigation (Tab, Escape)
 
 ### Optional Enhancements
-- [?] Swipe navigation for news articles
-- [?] Swipe navigation for photos
-- [?] Auto-hide UI after inactivity
-- [?] Loading state for weather data
+- [x] Swipe navigation for news articles
+- [x] Swipe navigation for photos
+- [x] Auto-hide UI after inactivity
+- [x] Loading state for weather data
 
 ## Bugs/Issues
 - None
