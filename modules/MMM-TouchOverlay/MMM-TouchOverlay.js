@@ -621,12 +621,12 @@ Module.register("MMM-TouchOverlay", {
 							<span class="label">Wind</span>
 							<span class="value">${this.formatWind(current.windSpeed)} ${windUnit}</span>
 						</div>
-						${current.uvIndex ? `
+						${current.uvIndex != null ? `
 						<div class="weather-detail-item">
 							<span class="label">UV Index</span>
 							<span class="value">${current.uvIndex}</span>
 						</div>` : ""}
-						${current.precipitationProbability ? `
+						${current.precipitationProbability != null ? `
 						<div class="weather-detail-item">
 							<span class="label">Precip</span>
 							<span class="value">${current.precipitationProbability}%</span>
@@ -666,7 +666,7 @@ Module.register("MMM-TouchOverlay", {
 			`;
 
 			forecast.slice(0, 7).forEach(day => {
-				const precipHtml = day.precipitationProbability ?
+				const precipHtml = day.precipitationProbability != null ?
 					`<span class="day-precip">${day.precipitationProbability}%</span>` : "";
 
 				html += `

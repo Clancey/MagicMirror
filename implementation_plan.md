@@ -39,7 +39,7 @@
 - [?] Ensure weather detail view respects unit preferences and matches module icon style
 
 ## Medium Priority
-- [ ] Show precipitation/UV values when available even if zero
+- [?] Show precipitation/UV values when available even if zero
 - [ ] Add automated tests for MMM-TouchOverlay core flows (overlay open/close, notifications, hide UI toggle, news navigation, calendar grouping, weather rendering, photo viewer pause/resume/swipe)
 - [ ] Reconcile spec template requirement with inline rendering (update specs or add templates)
 
