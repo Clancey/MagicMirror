@@ -258,14 +258,10 @@ handleCalendarTap(event) {
 
 | File | Changes |
 |------|---------|
-| `MMM-TouchOverlay.js` | Add calendar data listener, handler, render method |
+| `MMM-TouchOverlay.js` | Add calendar data listener, handler, render method (inline templates) |
 | `MMM-TouchOverlay.css` | Add calendar detail styles |
 
-### Files to Create
-
-| File | Description |
-|------|-------------|
-| `templates/calendar-detail.njk` | Calendar detail template |
+**Note**: Uses inline JavaScript template literals in `renderCalendarDetail()` instead of Nunjucks templates.
 
 ### Event Grouping Logic
 

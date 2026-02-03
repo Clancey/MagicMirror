@@ -195,14 +195,10 @@ handleNewsfeedTap(event) {
 
 | File | Changes |
 |------|---------|
-| `MMM-TouchOverlay.js` | Add news data listener, handler, render method |
+| `MMM-TouchOverlay.js` | Add news data listener, handler, render method (inline templates) |
 | `MMM-TouchOverlay.css` | Add news detail styles |
 
-### Files to Create
-
-| File | Description |
-|------|-------------|
-| `templates/news-detail.njk` | News detail template |
+**Note**: Uses inline JavaScript template literals in `renderNewsDetail()` instead of Nunjucks templates.
 
 ### Navigation Logic
 

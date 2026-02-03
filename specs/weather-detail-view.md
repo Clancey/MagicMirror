@@ -333,14 +333,10 @@ handleWeatherTap(event) {
 
 | File | Changes |
 |------|---------|
-| `MMM-TouchOverlay.js` | Add weather data listener, handler, render method |
+| `MMM-TouchOverlay.js` | Add weather data listener, handler, render method (inline templates) |
 | `MMM-TouchOverlay.css` | Add weather detail styles |
 
-### Files to Create
-
-| File | Description |
-|------|-------------|
-| `templates/weather-detail.njk` | Weather detail template |
+**Note**: Uses inline JavaScript template literals in `renderWeatherDetail()` instead of Nunjucks templates.
 
 ### Weather Icon Mapping
 

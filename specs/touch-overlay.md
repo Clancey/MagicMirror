@@ -193,9 +193,10 @@ attachTouchHandlers() {
 
 | File | Description |
 |------|-------------|
-| `modules/MMM-TouchOverlay/MMM-TouchOverlay.js` | Main module logic |
+| `modules/MMM-TouchOverlay/MMM-TouchOverlay.js` | Main module logic (includes inline templates) |
 | `modules/MMM-TouchOverlay/MMM-TouchOverlay.css` | Styles |
-| `modules/MMM-TouchOverlay/templates/overlay.njk` | Base template |
+
+**Note**: The module uses inline JavaScript template literals for rendering instead of Nunjucks templates. This approach was chosen for simplicity and to avoid external template dependencies.
 
 ### Dependencies
 

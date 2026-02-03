@@ -78,15 +78,16 @@ The overlay module reads data from existing module broadcasts:
 ```
 modules/
 └── MMM-TouchOverlay/
-    ├── MMM-TouchOverlay.js      # Main module
-    ├── MMM-TouchOverlay.css     # Styles
-    └── templates/
-        ├── overlay.njk          # Base overlay template
-        ├── news-detail.njk      # News detail view
-        ├── weather-detail.njk   # Weather detail view
-        ├── calendar-detail.njk  # Calendar detail view
-        └── photo-viewer.njk     # Photo enlargement view
+    ├── MMM-TouchOverlay.js      # Main module (includes inline templates)
+    └── MMM-TouchOverlay.css     # Styles
+tests/
+└── unit/
+    └── modules/
+        └── custom/
+            └── MMM-TouchOverlay_spec.js  # Unit tests
 ```
+
+**Note**: The module uses inline JavaScript template literals for rendering instead of Nunjucks templates. This simplifies the codebase and eliminates the need for external template dependencies.
 
 ## Implementation Order
 

@@ -232,14 +232,10 @@ closeOverlay() {
 
 | File | Changes |
 |------|---------|
-| `MMM-TouchOverlay.js` | Add photo handlers, slideshow control, render method |
+| `MMM-TouchOverlay.js` | Add photo handlers, slideshow control, render method (inline templates) |
 | `MMM-TouchOverlay.css` | Add photo viewer styles |
 
-### Files to Create
-
-| File | Description |
-|------|-------------|
-| `templates/photo-viewer.njk` | Photo viewer template |
+**Note**: Uses inline JavaScript template literals in `renderPhotoViewer()` instead of Nunjucks templates.
 
 ### Configuration Options
 
