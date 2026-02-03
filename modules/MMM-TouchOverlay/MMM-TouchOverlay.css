@@ -1,631 +1,633 @@
 /* MMM-TouchOverlay Styles */
 
 .touch-overlay-wrapper {
-	/* Wrapper doesn't need positioning - overlay is fixed */
+  /* Wrapper doesn't need positioning - overlay is fixed */
 }
 
 .touch-overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	z-index: 9999;
-	display: none;
-	opacity: 0;
-	transition: opacity 200ms ease-in-out;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  display: none;
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
 }
 
 .touch-overlay[data-visible="true"] {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .touch-overlay.visible {
-	opacity: 1;
+  opacity: 1;
 }
 
 .touch-overlay-backdrop {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background: rgba(0, 0, 0, 0.8);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(0 0 0 / 80%);
 }
 
 .touch-overlay-content {
-	position: relative;
-	max-width: 90vw;
-	max-height: 90vh;
-	background: rgba(0, 0, 0, 0.9);
-	border-radius: 8px;
-	overflow: auto;
-	z-index: 1;
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: rgb(0 0 0 / 90%);
+  border-radius: 8px;
+  overflow: auto;
+  z-index: 1;
 }
 
 .touch-overlay-close {
-	position: absolute;
-	top: 8px;
-	right: 8px;
-	width: 48px;
-	height: 48px;
-	min-width: 48px;
-	min-height: 48px;
-	background: transparent;
-	border: none;
-	color: white;
-	font-size: 32px;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 2;
-	-webkit-tap-highlight-color: transparent;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .touch-overlay-close:focus {
-	outline: 2px solid white;
-	outline-offset: 2px;
+  outline: 2px solid white;
+  outline-offset: 2px;
 }
 
 .touch-overlay-close:active {
-	opacity: 0.7;
+  opacity: 0.7;
 }
 
 .touch-overlay-body {
-	padding: 24px;
-	padding-top: 56px; /* Space for close button */
-	color: white;
-	min-width: 300px;
+  padding: 24px;
+  padding-top: 56px; /* Space for close button */
+  color: white;
+  min-width: 300px;
 }
 
 /* Make existing modules touchable */
 .newsfeed,
 .weather,
 .calendar {
-	cursor: pointer;
-	-webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Touch feedback for modules */
 .newsfeed:active,
 .weather:active,
 .calendar:active {
-	opacity: 0.8;
+  opacity: 0.8;
 }
 
 /* Hide UI Toggle Button */
 .touch-ui-toggle {
-	position: fixed;
-	bottom: 24px;
-	right: 24px;
-	width: 48px;
-	height: 48px;
-	background: rgba(0, 0, 0, 0.5);
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	border-radius: 50%;
-	color: white;
-	font-size: 20px;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 9998;
-	transition: background 200ms ease;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  background: rgb(0 0 0 / 50%);
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+  transition: background 200ms ease;
 }
 
 .touch-ui-toggle:hover,
 .touch-ui-toggle:focus {
-	background: rgba(0, 0, 0, 0.7);
-	outline: none;
+  background: rgb(0 0 0 / 70%);
+  outline: none;
 }
 
 .touch-ui-toggle:focus {
-	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 50%);
 }
 
 /* Show UI Button (when hidden) */
 .touch-ui-show {
-	position: fixed;
-	bottom: 24px;
-	right: 24px;
-	height: 36px;
-	padding: 0 16px;
-	background: rgba(0, 0, 0, 0.3);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 18px;
-	color: rgba(255, 255, 255, 0.5);
-	font-size: 12px;
-	cursor: pointer;
-	display: none;
-	align-items: center;
-	gap: 8px;
-	z-index: 9998;
-	transition: all 200ms ease;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  height: 36px;
+  padding: 0 16px;
+  background: rgb(0 0 0 / 30%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 18px;
+  color: rgb(255 255 255 / 50%);
+  font-size: 12px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  z-index: 9998;
+  transition: all 200ms ease;
 }
 
 .touch-ui-show:hover,
 .touch-ui-show:focus {
-	background: rgba(0, 0, 0, 0.5);
-	color: rgba(255, 255, 255, 0.8);
+  background: rgb(0 0 0 / 50%);
+  color: rgb(255 255 255 / 80%);
 }
 
 .show-icon {
-	font-size: 14px;
+  font-size: 14px;
 }
 
 .show-text {
-	text-transform: uppercase;
-	letter-spacing: 1px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* UI Hidden State */
-body.ui-hidden .region:not(.region.fullscreen_below):not(.region.fullscreen_above) {
-	opacity: 0 !important;
-	pointer-events: none !important;
-	transition: opacity 300ms ease-in-out;
+
+/* Hide all regions except fullscreen regions (which typically contain background modules) */
+body.ui-hidden .region:not(.region.fullscreen.below, .region.fullscreen.above) {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 300ms ease-in-out;
 }
 
 body.ui-hidden .module .module-header {
-	opacity: 0 !important;
+  opacity: 0 !important;
 }
 
 /* Ensure toggle wrapper stays visible */
 body.ui-hidden .touch-overlay-wrapper {
-	opacity: 1 !important;
-	pointer-events: auto !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 /* Ensure overlay stays interactive when UI hidden */
 body.ui-hidden .touch-overlay {
-	opacity: 1 !important;
-	pointer-events: auto !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 /* News Detail View */
 .news-detail {
-	max-width: 800px;
-	padding: 24px;
+  max-width: 800px;
+  padding: 24px;
 }
 
 .news-detail-header {
-	display: flex;
-	justify-content: space-between;
-	margin-bottom: 16px;
-	color: rgba(255, 255, 255, 0.6);
-	font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  color: rgb(255 255 255 / 60%);
+  font-size: 14px;
 }
 
 .news-headline {
-	font-size: 28px;
-	font-weight: bold;
-	line-height: 1.3;
-	margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1.3;
+  margin-bottom: 24px;
 }
 
 .news-summary {
-	font-size: 18px;
-	line-height: 1.6;
-	margin-bottom: 24px;
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 24px;
 }
 
 .news-link-indicator {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	color: rgba(255, 255, 255, 0.5);
-	font-size: 14px;
-	padding: 12px;
-	background: rgba(255, 255, 255, 0.05);
-	border-radius: 4px;
-	margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgb(255 255 255 / 50%);
+  font-size: 14px;
+  padding: 12px;
+  background: rgb(255 255 255 / 5%);
+  border-radius: 4px;
+  margin-bottom: 24px;
 }
 
 .news-link-text {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .news-navigation {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 24px;
-	padding-top: 16px;
-	border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgb(255 255 255 / 10%);
 }
 
 .news-nav-btn {
-	width: 48px;
-	height: 48px;
-	background: rgba(255, 255, 255, 0.1);
-	border: none;
-	border-radius: 50%;
-	color: white;
-	font-size: 24px;
-	cursor: pointer;
+  width: 48px;
+  height: 48px;
+  background: rgb(255 255 255 / 10%);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
 }
 
 .news-nav-btn:focus {
-	outline: 2px solid white;
-	outline-offset: 2px;
+  outline: 2px solid white;
+  outline-offset: 2px;
 }
 
 .news-nav-btn:active {
-	opacity: 0.7;
+  opacity: 0.7;
 }
 
 .news-nav-btn:disabled {
-	opacity: 0.3;
-	cursor: not-allowed;
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .news-position {
-	color: rgba(255, 255, 255, 0.6);
-	font-size: 14px;
+  color: rgb(255 255 255 / 60%);
+  font-size: 14px;
 }
 
 /* Calendar Detail View */
 .calendar-detail {
-	max-width: 600px;
-	width: 100%;
-	max-height: 80vh;
-	overflow-y: auto;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .calendar-title {
-	font-size: 24px;
-	font-weight: 300;
-	margin-bottom: 24px;
-	text-align: center;
+  font-size: 24px;
+  font-weight: 300;
+  margin-bottom: 24px;
+  text-align: center;
 }
 
 .calendar-empty {
-	text-align: center;
-	color: rgba(255, 255, 255, 0.5);
-	font-size: 18px;
-	padding: 48px 0;
+  text-align: center;
+  color: rgb(255 255 255 / 50%);
+  font-size: 18px;
+  padding: 48px 0;
 }
 
 /* Date Headers */
 .calendar-day {
-	margin-bottom: 24px;
+  margin-bottom: 24px;
 }
 
 .calendar-date-header {
-	font-size: 14px;
-	text-transform: uppercase;
-	color: rgba(255, 255, 255, 0.6);
-	padding-bottom: 8px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	margin-bottom: 12px;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 60%);
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgb(255 255 255 / 10%);
+  margin-bottom: 12px;
 }
 
 .calendar-date-header.today {
-	color: #4a9eff;
+  color: #4a9eff;
 }
 
 .calendar-date-header.tomorrow {
-	color: #7eb8ff;
+  color: #7eb8ff;
 }
 
 /* Events */
 .calendar-events {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .calendar-event {
-	display: flex;
-	gap: 16px;
-	padding: 12px;
-	background: rgba(255, 255, 255, 0.05);
-	border-radius: 8px;
-	border-left: 4px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+  background: rgb(255 255 255 / 5%);
+  border-radius: 8px;
+  border-left: 4px solid rgb(255 255 255 / 30%);
 }
 
 .calendar-event.past {
-	opacity: 0.5;
+  opacity: 0.5;
 }
 
 .calendar-event.all-day {
-	background: rgba(255, 255, 255, 0.08);
+  background: rgb(255 255 255 / 8%);
 }
 
 /* Time Column */
 .event-time {
-	min-width: 80px;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	font-size: 14px;
-	color: rgba(255, 255, 255, 0.8);
+  min-width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 14px;
+  color: rgb(255 255 255 / 80%);
 }
 
 .event-separator {
-	color: rgba(255, 255, 255, 0.4);
+  color: rgb(255 255 255 / 40%);
 }
 
 .all-day-badge {
-	background: rgba(255, 255, 255, 0.15);
-	padding: 2px 8px;
-	border-radius: 4px;
-	font-size: 12px;
-	text-transform: uppercase;
+  background: rgb(255 255 255 / 15%);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-transform: uppercase;
 }
 
 /* Details Column */
 .event-details {
-	flex: 1;
+  flex: 1;
 }
 
 .event-title {
-	font-size: 16px;
-	font-weight: 500;
-	margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
 }
 
 .event-location {
-	font-size: 14px;
-	color: rgba(255, 255, 255, 0.6);
-	display: flex;
-	align-items: center;
-	gap: 4px;
+  font-size: 14px;
+  color: rgb(255 255 255 / 60%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .location-icon {
-	font-size: 12px;
+  font-size: 12px;
 }
 
 .event-calendar {
-	font-size: 12px;
-	color: rgba(255, 255, 255, 0.4);
-	margin-top: 4px;
+  font-size: 12px;
+  color: rgb(255 255 255 / 40%);
+  margin-top: 4px;
 }
 
 /* Weather Detail View */
 .weather-detail {
-	max-width: 600px;
-	width: 100%;
+  max-width: 600px;
+  width: 100%;
 }
 
 /* Weather Loading State */
 .weather-loading {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 48px;
-	text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  text-align: center;
 }
 
 .weather-loading-spinner {
-	width: 48px;
-	height: 48px;
-	border: 4px solid rgba(255, 255, 255, 0.2);
-	border-top-color: white;
-	border-radius: 50%;
-	animation: weather-spin 1s linear infinite;
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgb(255 255 255 / 20%);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: weather-spin 1s linear infinite;
 }
 
 @keyframes weather-spin {
-	to {
-		transform: rotate(360deg);
-	}
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .weather-loading-text {
-	margin-top: 24px;
-	color: rgba(255, 255, 255, 0.6);
-	font-size: 18px;
+  margin-top: 24px;
+  color: rgb(255 255 255 / 60%);
+  font-size: 18px;
 }
 
 .weather-location {
-	font-size: 16px;
-	color: rgba(255, 255, 255, 0.6);
-	margin-bottom: 16px;
+  font-size: 16px;
+  color: rgb(255 255 255 / 60%);
+  margin-bottom: 16px;
 }
 
 /* Current Conditions */
 .weather-current {
-	text-align: center;
-	padding-bottom: 24px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	margin-bottom: 24px;
+  text-align: center;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgb(255 255 255 / 10%);
+  margin-bottom: 24px;
 }
 
 .weather-current-main {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 16px;
-	margin-bottom: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
 }
 
 .weather-icon {
-	font-size: 64px;
+  font-size: 64px;
 }
 
 .weather-temp-large {
-	font-size: 72px;
-	font-weight: 300;
+  font-size: 72px;
+  font-weight: 300;
 }
 
 .weather-current-desc {
-	font-size: 20px;
-	margin-bottom: 16px;
-	text-transform: capitalize;
+  font-size: 20px;
+  margin-bottom: 16px;
+  text-transform: capitalize;
 }
 
 .weather-current-details {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
 }
 
 .weather-detail-item {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .weather-detail-item .label {
-	font-size: 12px;
-	color: rgba(255, 255, 255, 0.6);
-	text-transform: uppercase;
+  font-size: 12px;
+  color: rgb(255 255 255 / 60%);
+  text-transform: uppercase;
 }
 
 .weather-detail-item .value {
-	font-size: 18px;
+  font-size: 18px;
 }
 
 /* Hourly Forecast */
 .weather-hourly {
-	padding-bottom: 24px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgb(255 255 255 / 10%);
+  margin-bottom: 24px;
 }
 
 .weather-section-title {
-	font-size: 14px;
-	text-transform: uppercase;
-	color: rgba(255, 255, 255, 0.6);
-	margin-bottom: 16px;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 60%);
+  margin-bottom: 16px;
 }
 
 .weather-hourly-scroll {
-	display: flex;
-	gap: 16px;
-	overflow-x: auto;
-	padding-bottom: 8px;
-	-webkit-overflow-scrolling: touch;
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .weather-hour {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	min-width: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
 }
 
 .hour-time {
-	font-size: 14px;
-	color: rgba(255, 255, 255, 0.6);
-	margin-bottom: 8px;
+  font-size: 14px;
+  color: rgb(255 255 255 / 60%);
+  margin-bottom: 8px;
 }
 
 .hour-icon {
-	font-size: 24px;
-	margin-bottom: 8px;
+  font-size: 24px;
+  margin-bottom: 8px;
 }
 
 .hour-temp {
-	font-size: 16px;
+  font-size: 16px;
 }
 
 /* Daily Forecast */
 .weather-forecast-list {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .weather-day {
-	display: grid;
-	grid-template-columns: 80px 32px 48px 48px 48px;
-	align-items: center;
-	gap: 8px;
+  display: grid;
+  grid-template-columns: 80px 32px 48px 48px 48px;
+  align-items: center;
+  gap: 8px;
 }
 
 .day-name {
-	font-size: 16px;
+  font-size: 16px;
 }
 
 .day-icon {
-	font-size: 20px;
+  font-size: 20px;
 }
 
 .day-high {
-	font-size: 16px;
-	text-align: right;
+  font-size: 16px;
+  text-align: right;
 }
 
 .day-low {
-	font-size: 16px;
-	color: rgba(255, 255, 255, 0.6);
-	text-align: right;
+  font-size: 16px;
+  color: rgb(255 255 255 / 60%);
+  text-align: right;
 }
 
 .day-precip {
-	font-size: 14px;
-	color: #6cb4ee;
-	text-align: right;
+  font-size: 14px;
+  color: #6cb4ee;
+  text-align: right;
 }
 
 /* Photo Viewer */
 .photo-viewer {
-	width: 100%;
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	position: relative;
-	min-height: 60vh;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-height: 60vh;
 }
 
 .photo-viewer-image {
-	max-width: 95vw;
-	max-height: 85vh;
-	object-fit: contain;
-	border-radius: 4px;
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  max-width: 95vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 50%);
 }
 
 .photo-metadata {
-	position: absolute;
-	bottom: 24px;
-	left: 50%;
-	transform: translateX(-50%);
-	display: flex;
-	gap: 16px;
-	padding: 12px 24px;
-	background: rgba(0, 0, 0, 0.7);
-	border-radius: 8px;
-	font-size: 14px;
-	color: rgba(255, 255, 255, 0.9);
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  padding: 12px 24px;
+  background: rgb(0 0 0 / 70%);
+  border-radius: 8px;
+  font-size: 14px;
+  color: rgb(255 255 255 / 90%);
 }
 
 .photo-date::before {
-	content: "📅 ";
+  content: "📅 ";
 }
 
 .photo-album::before {
-	content: "📁 ";
+  content: "📁 ";
 }
 
 .photo-filename {
-	color: rgba(255, 255, 255, 0.6);
+  color: rgb(255 255 255 / 60%);
 }
 
 /* Fullscreen-specific overlay adjustments for photo viewer */
 .touch-overlay[data-content="photo"] .touch-overlay-content {
-	background: transparent;
-	max-width: 100vw;
-	max-height: 100vh;
-	border-radius: 0;
+  background: transparent;
+  max-width: 100vw;
+  max-height: 100vh;
+  border-radius: 0;
 }
 
 .touch-overlay[data-content="photo"] .touch-overlay-body {
-	padding: 0;
-	padding-top: 56px;
+  padding: 0;
+  padding-top: 56px;
 }
 
 .touch-overlay[data-content="photo"] .touch-overlay-close {
-	background: rgba(0, 0, 0, 0.5);
-	border-radius: 50%;
+  background: rgb(0 0 0 / 50%);
+  border-radius: 50%;
 }

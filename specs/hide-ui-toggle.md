@@ -32,7 +32,8 @@ Use CSS classes to hide modules rather than MagicMirror's `hide()` method. This 
 
 ```css
 /* When UI is hidden, hide all module regions except fullscreen */
-body.ui-hidden .region:not(.region.fullscreen_below):not(.region.fullscreen_above) {
+/* Note: fullscreen regions use separate classes (e.g., "region fullscreen below") */
+body.ui-hidden .region:not(.region.fullscreen.below):not(.region.fullscreen.above) {
     opacity: 0;
     pointer-events: none;
     transition: opacity 300ms ease-in-out;
@@ -227,7 +228,8 @@ restoreUIState: function() {
 }
 
 /* UI Hidden State */
-body.ui-hidden .region:not(.region.fullscreen_below):not(.region.fullscreen_above) {
+/* Hide all regions except fullscreen (where background modules like MMM-ImmichTileSlideShow live) */
+body.ui-hidden .region:not(.region.fullscreen.below):not(.region.fullscreen.above) {
     opacity: 0 !important;
     pointer-events: none !important;
     transition: opacity 300ms ease-in-out;
