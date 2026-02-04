@@ -111,8 +111,6 @@ Module.register("MMM-TouchOverlay", {
 		const uiToggleButton = document.createElement("button");
 		uiToggleButton.className = "touch-ui-toggle";
 		uiToggleButton.setAttribute("aria-label", "Hide interface");
-		uiToggleButton.style.width = "48px";
-		uiToggleButton.style.height = "48px";
 		uiToggleButton.innerHTML = "<span class=\"toggle-icon\">👁</span>";
 		uiToggleButton.addEventListener("click", () => this.toggleUI());
 		this.applyTogglePosition(uiToggleButton, this.config.hideUITogglePosition);
