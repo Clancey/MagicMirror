@@ -588,6 +588,13 @@ body.ui-hidden .touch-overlay {
   box-shadow: 0 8px 32px rgb(0 0 0 / 50%);
 }
 
+.photo-viewer-video {
+  max-width: 100vw;
+  max-height: 100vh;
+  object-fit: contain;
+  background: #000;
+}
+
 .photo-metadata {
   position: absolute;
   bottom: 24px;
@@ -617,6 +624,8 @@ body.ui-hidden .touch-overlay {
 /* Fullscreen-specific overlay adjustments for photo viewer */
 .touch-overlay[data-content="photo"] .touch-overlay-content {
   background: transparent;
+  width: 100vw;
+  height: 100vh;
   max-width: 100vw;
   max-height: 100vh;
   border-radius: 0;
@@ -624,7 +633,27 @@ body.ui-hidden .touch-overlay {
 
 .touch-overlay[data-content="photo"] .touch-overlay-body {
   padding: 0;
-  padding-top: 56px;
+  width: 100%;
+  height: 100%;
+}
+
+.touch-overlay[data-content="photo"] .photo-viewer {
+  width: 100vw;
+  height: 100vh;
+}
+
+.touch-overlay[data-content="photo"] .photo-viewer-image {
+  max-width: 100vw;
+  max-height: 100vh;
+  object-fit: contain;
+}
+
+.touch-overlay[data-content="photo"] .photo-viewer-video {
+  max-width: 100vw;
+  max-height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain;
 }
 
 .touch-overlay[data-content="photo"] .touch-overlay-close {

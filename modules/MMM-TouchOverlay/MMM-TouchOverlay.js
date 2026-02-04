@@ -163,19 +163,28 @@ Module.register("MMM-TouchOverlay", {
 		// Newsfeed module
 		const newsfeed = document.querySelector(".newsfeed");
 		if (newsfeed) {
-			newsfeed.addEventListener("click", (e) => this.handleNewsfeedTap(e));
+			newsfeed.addEventListener("click", (e) => {
+				if (document.body.classList.contains("ui-hidden")) return;
+				this.handleNewsfeedTap(e);
+			});
 		}
 
 		// Weather module
 		const weather = document.querySelector(".weather");
 		if (weather) {
-			weather.addEventListener("click", (e) => this.handleWeatherTap(e));
+			weather.addEventListener("click", (e) => {
+				if (document.body.classList.contains("ui-hidden")) return;
+				this.handleWeatherTap(e);
+			});
 		}
 
 		// Calendar module
 		const calendar = document.querySelector(".calendar");
 		if (calendar) {
-			calendar.addEventListener("click", (e) => this.handleCalendarTap(e));
+			calendar.addEventListener("click", (e) => {
+				if (document.body.classList.contains("ui-hidden")) return;
+				this.handleCalendarTap(e);
+			});
 		}
 
 		// Photo slideshow handlers
@@ -371,6 +380,7 @@ Module.register("MMM-TouchOverlay", {
 	},
 
 	handlePhotoTap: function (imgElement) {
+		const isVideo = imgElement.tagName === "VIDEO" || imgElement.classList.contains("immich-tile-video");
 		const imageUrl = this.getImageUrlFromElement(imgElement);
 		if (!imageUrl) return;
 
@@ -381,14 +391,32 @@ Module.register("MMM-TouchOverlay", {
 			this.pauseSlideshow();
 		}
 
+		if (isVideo) {
+			// For videos, get the video URL and open video viewer
+			const videoUrl = this.getVideoUrl(imgElement);
+			this.photoData = {
+				currentImage: imageUrl,
+				currentVideo: videoUrl,
+				isVideo: true,
+				metadata: metadata,
+				slideshowPaused: true
+			};
+			this.openOverlay("photo", this.photoData);
+			return;
+		}
+
+		// For images, convert thumbnail URL to preview URL for larger size
+		const previewUrl = this.convertToPreviewUrl(imageUrl);
+
 		this.photoData = {
-			currentImage: imageUrl,
+			currentImage: previewUrl,
+			isVideo: false,
 			metadata: metadata,
 			slideshowPaused: true
 		};
 
-		// Preload the current image before opening overlay for smoother experience
-		this.preloadImage(imageUrl)
+		// Preload the preview image before opening overlay
+		this.preloadImage(previewUrl)
 			.then(() => {
 				this.openOverlay("photo", this.photoData);
 
@@ -399,6 +427,32 @@ Module.register("MMM-TouchOverlay", {
 				Log.error("MMM-TouchOverlay: Failed to preload image:", err);
 				this.openOverlay("photo", this.photoData);
 			});
+	},
+
+	convertToPreviewUrl: function (url) {
+		if (!url) return url;
+		// Convert /immichtilesslideshow/{id} to /immichtilesslideshow-preview/{id}
+		if (url.includes("/immichtilesslideshow/")) {
+			return url.replace("/immichtilesslideshow/", "/immichtilesslideshow-preview/");
+		}
+		return url;
+	},
+
+	getVideoUrl: function (element) {
+		if (!element) return null;
+		// For video elements, get the source URL
+		if (element.tagName === "VIDEO") {
+			return element.currentSrc || element.src || null;
+		}
+		// For immich tiles, construct video URL from image URL
+		const tile = element.closest(".immich-tile");
+		if (tile) {
+			const video = tile.querySelector("video.immich-tile-video");
+			if (video) {
+				return video.currentSrc || video.src || null;
+			}
+		}
+		return null;
 	},
 
 	extractPhotoMetadata: function (imgElement) {
@@ -899,7 +953,7 @@ Module.register("MMM-TouchOverlay", {
 	},
 
 	renderPhotoViewer: function () {
-		if (!this.photoData.currentImage) {
+		if (!this.photoData.currentImage && !this.photoData.currentVideo) {
 			this.bodyElement.innerHTML = "<p>No photo available</p>";
 			return;
 		}
@@ -920,13 +974,33 @@ Module.register("MMM-TouchOverlay", {
 			`;
 		}
 
-		this.bodyElement.innerHTML = `
-			<div class="photo-viewer">
+		let mediaHtml;
+		if (this.photoData.isVideo && this.photoData.currentVideo) {
+			// Render video with audio controls
+			mediaHtml = `
+				<video
+					class="photo-viewer-video"
+					src="${this.photoData.currentVideo}"
+					poster="${this.photoData.currentImage || ""}"
+					controls
+					autoplay
+					playsinline
+				></video>
+			`;
+		} else {
+			// Render image
+			mediaHtml = `
 				<img
 					class="photo-viewer-image"
 					src="${this.photoData.currentImage}"
 					alt="${metadata?.filename || "Photo"}"
 				/>
+			`;
+		}
+
+		this.bodyElement.innerHTML = `
+			<div class="photo-viewer">
+				${mediaHtml}
 				${metadataHtml}
 			</div>
 		`;
