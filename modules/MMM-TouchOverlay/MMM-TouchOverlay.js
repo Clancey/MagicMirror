@@ -194,8 +194,8 @@ Module.register("MMM-TouchOverlay", {
 	},
 
 	attachPhotoHandlers: function () {
-		// Listen for clicks on slideshow images with event delegation
-		document.addEventListener("click", (e) => {
+		// Handler function for both click and touch events
+		const handlePhotoEvent = (e) => {
 			if (this.overlayState.isOpen) return;
 
 			const immichTile = e.target.closest(".immich-tile");
@@ -203,6 +203,7 @@ Module.register("MMM-TouchOverlay", {
 				const mediaElement = immichTile.querySelector("video.immich-tile-video") ||
 					immichTile.querySelector(".immich-tile-img");
 				if (mediaElement) {
+					e.preventDefault();
 					e.stopPropagation();
 					this.handlePhotoTap(mediaElement);
 				}
@@ -219,8 +220,39 @@ Module.register("MMM-TouchOverlay", {
 			);
 
 			if (img) {
+				e.preventDefault();
 				e.stopPropagation();
 				this.handlePhotoTap(img);
+			}
+		};
+
+		// Listen for both click and touchend events
+		document.addEventListener("click", handlePhotoEvent);
+
+		// Track touch start position to distinguish taps from swipes
+		let touchStartX = 0;
+		let touchStartY = 0;
+
+		document.addEventListener("touchstart", (e) => {
+			const touch = e.touches[0];
+			touchStartX = touch.clientX;
+			touchStartY = touch.clientY;
+		}, { passive: true });
+
+		document.addEventListener("touchend", (e) => {
+			// Only handle as tap if touch didn't move much (not a swipe)
+			const touch = e.changedTouches[0];
+			const deltaX = Math.abs(touch.clientX - touchStartX);
+			const deltaY = Math.abs(touch.clientY - touchStartY);
+
+			if (deltaX < 10 && deltaY < 10) {
+				// Create a synthetic event with the touch target
+				const syntheticEvent = {
+					target: e.target,
+					preventDefault: () => e.preventDefault(),
+					stopPropagation: () => e.stopPropagation()
+				};
+				handlePhotoEvent(syntheticEvent);
 			}
 		});
 	},
