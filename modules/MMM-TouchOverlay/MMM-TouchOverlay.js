@@ -1014,6 +1014,7 @@ Module.register("MMM-TouchOverlay", {
 					poster="${this.photoData.currentImage || ""}"
 					controls
 					autoplay
+					loop
 					playsinline
 				></video>
 			`;
