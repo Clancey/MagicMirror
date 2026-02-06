@@ -17,15 +17,9 @@ const app = electron.app;
 if (process.env.ELECTRON_ENABLE_GPU !== "1") {
 	app.disableHardwareAcceleration();
 } else {
-	// GPU is enabled - add Chromium flags for better video playback (especially on Raspberry Pi)
+	// GPU is enabled - add Chromium flags for better video playback
 	app.commandLine.appendSwitch("ignore-gpu-blocklist");
 	app.commandLine.appendSwitch("enable-gpu-rasterization");
-	app.commandLine.appendSwitch("enable-zero-copy");
-	app.commandLine.appendSwitch("disable-software-rasterizer");
-	// Enable hardware video decoding on Linux (V4L2/VAAPI)
-	app.commandLine.appendSwitch("enable-features", "VaapiVideoDecoder,VaapiVideoEncoder,Vulkan,CanvasOopRasterization");
-	// Reduce video decoding overhead
-	app.commandLine.appendSwitch("disable-features", "UseChromeOSDirectVideoDecoder");
 }
 
 // Module to create native browser window.
