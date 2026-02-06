@@ -170,24 +170,6 @@ Module.register("MMM-TouchOverlay", {
 			});
 		}
 
-		// Weather module
-		const weather = document.querySelector(".weather");
-		if (weather) {
-			weather.addEventListener("click", (e) => {
-				if (document.body.classList.contains("ui-hidden")) return;
-				this.handleWeatherTap(e);
-			});
-		}
-
-		// Calendar module
-		const calendar = document.querySelector(".calendar");
-		if (calendar) {
-			calendar.addEventListener("click", (e) => {
-				if (document.body.classList.contains("ui-hidden")) return;
-				this.handleCalendarTap(e);
-			});
-		}
-
 		// Photo slideshow handlers
 		this.attachPhotoHandlers();
 
