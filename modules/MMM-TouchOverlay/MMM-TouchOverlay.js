@@ -60,6 +60,9 @@ Module.register("MMM-TouchOverlay", {
 		slideshowPaused: false
 	},
 
+	// Pending hide animation timeout (to cancel on rapid reopen)
+	hideTimeoutId: null,
+
 	getStyles: function () {
 		return ["MMM-TouchOverlay.css"];
 	},
@@ -318,6 +321,12 @@ Module.register("MMM-TouchOverlay", {
 	showOverlay: function () {
 		if (!this.overlayElement) return;
 
+		// Cancel any pending hide animation to prevent race condition
+		if (this.hideTimeoutId) {
+			clearTimeout(this.hideTimeoutId);
+			this.hideTimeoutId = null;
+		}
+
 		this.overlayElement.setAttribute("data-visible", "true");
 		// Trigger reflow for animation
 		this.overlayElement.offsetHeight;
@@ -330,12 +339,21 @@ Module.register("MMM-TouchOverlay", {
 	hideOverlay: function () {
 		if (!this.overlayElement) return;
 
+		// Cancel any previous pending hide
+		if (this.hideTimeoutId) {
+			clearTimeout(this.hideTimeoutId);
+		}
+
 		this.overlayElement.classList.remove("visible");
 		// Wait for animation to complete before hiding
-		setTimeout(() => {
-			this.overlayElement.setAttribute("data-visible", "false");
-			if (this.bodyElement) {
-				this.bodyElement.innerHTML = "";
+		this.hideTimeoutId = setTimeout(() => {
+			this.hideTimeoutId = null;
+			// Only apply if overlay is still meant to be closed
+			if (!this.overlayState.isOpen) {
+				this.overlayElement.setAttribute("data-visible", "false");
+				if (this.bodyElement) {
+					this.bodyElement.innerHTML = "";
+				}
 			}
 		}, this.config.animationSpeed);
 	},
