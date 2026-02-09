@@ -424,6 +424,10 @@ Module.register("MMM-TouchOverlay", {
 			this.pauseSlideshow();
 		}
 
+		// Snapshot all tile media for swipe navigation
+		const allMedia = this._collectTileMedia();
+		let mediaIndex = this._findCurrentTileIndex(allMedia, assetId, imageUrl, this.getVideoUrl(imgElement));
+
 		if (isVideo) {
 			const videoUrl = this.getVideoUrl(imgElement);
 			this.photoData = {
@@ -432,10 +436,11 @@ Module.register("MMM-TouchOverlay", {
 				isVideo: true,
 				assetId: assetId,
 				metadata: metadata,
-				slideshowPaused: true
+				slideshowPaused: true,
+				allMedia: allMedia,
+				mediaIndex: mediaIndex
 			};
 			this.openOverlay("photo", this.photoData);
-			// Fetch rich metadata in background
 			if (assetId) {
 				this.fetchAssetMetadata(assetId).then(function (rich) {
 					if (rich && self.overlayState.isOpen && self.overlayState.contentType === "photo") {
@@ -455,7 +460,9 @@ Module.register("MMM-TouchOverlay", {
 			isVideo: false,
 			assetId: assetId,
 			metadata: metadata,
-			slideshowPaused: true
+			slideshowPaused: true,
+			allMedia: allMedia,
+			mediaIndex: mediaIndex
 		};
 
 		// Preload the preview image before opening overlay
@@ -463,7 +470,6 @@ Module.register("MMM-TouchOverlay", {
 			.then(() => {
 				self.openOverlay("photo", self.photoData);
 				self.preloadAdjacentImages(imgElement);
-				// Fetch rich metadata in background
 				if (assetId) {
 					self.fetchAssetMetadata(assetId).then(function (rich) {
 						if (rich && self.overlayState.isOpen && self.overlayState.contentType === "photo") {
@@ -1306,22 +1312,21 @@ Module.register("MMM-TouchOverlay", {
 		return m ? m[1] : null;
 	},
 
-	_findCurrentTileIndex: function (items) {
-		var currentAssetId = this.photoData.assetId;
-		var currentImage = this.photoData.currentImage;
-		var currentVideo = this.photoData.currentVideo;
+	_findCurrentTileIndex: function (items, assetId, imageUrl, videoUrl) {
+		var aid = assetId || (this.photoData && this.photoData.assetId);
+		var img = imageUrl || (this.photoData && this.photoData.currentImage);
+		var vid = videoUrl || (this.photoData && this.photoData.currentVideo);
 		for (var i = 0; i < items.length; i++) {
 			var item = items[i];
-			if (currentAssetId) {
+			if (aid) {
 				var url = item.videoUrl || item.imageUrl || "";
-				if (url.indexOf(currentAssetId) !== -1) return i;
+				if (url.indexOf(aid) !== -1) return i;
 			}
-			if (item.isVideo && currentVideo && item.videoUrl === currentVideo) return i;
-			if (!item.isVideo && currentImage) {
-				// Compare both thumbnail and preview variants
+			if (item.isVideo && vid && item.videoUrl === vid) return i;
+			if (!item.isVideo && img) {
 				var thumbUrl = (item.imageUrl || "").replace("/immichtilesslideshow-preview/", "/immichtilesslideshow/");
 				var previewUrl = (item.imageUrl || "").replace("/immichtilesslideshow/", "/immichtilesslideshow-preview/");
-				if (currentImage === item.imageUrl || currentImage === previewUrl || currentImage === thumbUrl) return i;
+				if (img === item.imageUrl || img === previewUrl || img === thumbUrl) return i;
 			}
 		}
 		return -1;
@@ -1329,10 +1334,10 @@ Module.register("MMM-TouchOverlay", {
 
 	navigatePhoto: function (direction) {
 		var self = this;
-		var items = this._collectTileMedia();
-		if (items.length === 0) return;
+		var items = this.photoData.allMedia;
+		if (!items || items.length === 0) return;
 
-		var currentIndex = this._findCurrentTileIndex(items);
+		var currentIndex = (typeof this.photoData.mediaIndex === "number") ? this.photoData.mediaIndex : -1;
 		if (currentIndex === -1) return;
 
 		var newIndex;
@@ -1347,11 +1352,15 @@ Module.register("MMM-TouchOverlay", {
 		// Wrap around
 		if (newIndex < 0) newIndex = items.length - 1;
 		if (newIndex >= items.length) newIndex = 0;
+		if (newIndex === currentIndex) return;
 
 		var next = items[newIndex];
 		if (!next) return;
 
 		var assetId = this.extractAssetIdFromUrl(next.videoUrl || next.imageUrl);
+
+		// Preserve allMedia and update mediaIndex
+		var allMedia = items;
 
 		if (next.isVideo) {
 			this.photoData = {
@@ -1360,7 +1369,9 @@ Module.register("MMM-TouchOverlay", {
 				isVideo: true,
 				assetId: assetId,
 				metadata: null,
-				slideshowPaused: true
+				slideshowPaused: true,
+				allMedia: allMedia,
+				mediaIndex: newIndex
 			};
 			this.renderPhotoViewer();
 			if (assetId) {
@@ -1378,7 +1389,9 @@ Module.register("MMM-TouchOverlay", {
 				isVideo: false,
 				assetId: assetId,
 				metadata: null,
-				slideshowPaused: true
+				slideshowPaused: true,
+				allMedia: allMedia,
+				mediaIndex: newIndex
 			};
 			this.preloadImage(previewUrl)
 				.then(function () {
