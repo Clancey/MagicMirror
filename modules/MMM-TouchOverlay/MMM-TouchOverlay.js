@@ -410,11 +410,14 @@ Module.register("MMM-TouchOverlay", {
 	},
 
 	handlePhotoTap: function (imgElement) {
+		const self = this;
 		const isVideo = imgElement.tagName === "VIDEO" || imgElement.classList.contains("immich-tile-video");
 		const imageUrl = this.getImageUrlFromElement(imgElement);
 		if (!imageUrl) return;
 
 		const metadata = this.extractPhotoMetadata(imgElement);
+		const assetId = this.extractAssetIdFromUrl(imageUrl) ||
+			this.extractAssetIdFromUrl(this.getVideoUrl(imgElement));
 
 		// Pause slideshow if enabled
 		if (this.config.photoViewer?.slideshowPauseEnabled !== false) {
@@ -422,16 +425,25 @@ Module.register("MMM-TouchOverlay", {
 		}
 
 		if (isVideo) {
-			// For videos, get the video URL and open video viewer
 			const videoUrl = this.getVideoUrl(imgElement);
 			this.photoData = {
 				currentImage: imageUrl,
 				currentVideo: videoUrl,
 				isVideo: true,
+				assetId: assetId,
 				metadata: metadata,
 				slideshowPaused: true
 			};
 			this.openOverlay("photo", this.photoData);
+			// Fetch rich metadata in background
+			if (assetId) {
+				this.fetchAssetMetadata(assetId).then(function (rich) {
+					if (rich && self.overlayState.isOpen && self.overlayState.contentType === "photo") {
+						self.photoData.metadata = rich;
+						self._updateMetadataBar(rich);
+					}
+				});
+			}
 			return;
 		}
 
@@ -441,6 +453,7 @@ Module.register("MMM-TouchOverlay", {
 		this.photoData = {
 			currentImage: previewUrl,
 			isVideo: false,
+			assetId: assetId,
 			metadata: metadata,
 			slideshowPaused: true
 		};
@@ -448,14 +461,21 @@ Module.register("MMM-TouchOverlay", {
 		// Preload the preview image before opening overlay
 		this.preloadImage(previewUrl)
 			.then(() => {
-				this.openOverlay("photo", this.photoData);
-
-				// Try to preload adjacent images for even smoother navigation
-				this.preloadAdjacentImages(imgElement);
+				self.openOverlay("photo", self.photoData);
+				self.preloadAdjacentImages(imgElement);
+				// Fetch rich metadata in background
+				if (assetId) {
+					self.fetchAssetMetadata(assetId).then(function (rich) {
+						if (rich && self.overlayState.isOpen && self.overlayState.contentType === "photo") {
+							self.photoData.metadata = rich;
+							self._updateMetadataBar(rich);
+						}
+					});
+				}
 			})
 			.catch((err) => {
 				Log.error("MMM-TouchOverlay: Failed to preload image:", err);
-				this.openOverlay("photo", this.photoData);
+				self.openOverlay("photo", self.photoData);
 			});
 	},
 
@@ -466,6 +486,49 @@ Module.register("MMM-TouchOverlay", {
 			return url.replace("/immichtilesslideshow/", "/immichtilesslideshow-preview/");
 		}
 		return url;
+	},
+
+	extractAssetIdFromUrl: function (url) {
+		if (!url) return null;
+		const match = url.match(/\/immichtilesslideshow(?:-preview|-video)?\/([\w-]+)/);
+		return match ? match[1] : null;
+	},
+
+	fetchAssetMetadata: function (assetId) {
+		if (!assetId) return Promise.resolve(null);
+		return fetch("/immichtilesslideshow-info/" + assetId)
+			.then(function (res) {
+				if (!res.ok) return null;
+				return res.json();
+			})
+			.then(function (data) {
+				if (!data) return null;
+				var exif = data.exifInfo || {};
+				var dateStr = null;
+				if (exif.dateTimeOriginal) {
+					try {
+						var d = new Date(exif.dateTimeOriginal);
+						dateStr = d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+					} catch (e) {
+						dateStr = null;
+					}
+				}
+				var locationParts = [];
+				if (exif.city) locationParts.push(exif.city);
+				if (exif.state) locationParts.push(exif.state);
+				else if (exif.country) locationParts.push(exif.country);
+				var location = locationParts.length > 0 ? locationParts.join(", ") : null;
+				return {
+					date: dateStr,
+					location: location,
+					album: data.albumName || null,
+					filename: data.originalFileName || null,
+					people: (data.people || []).map(function (p) { return p.name; }).filter(Boolean)
+				};
+			})
+			.catch(function () {
+				return null;
+			});
 	},
 
 	getVideoUrl: function (element) {
@@ -990,23 +1053,29 @@ Module.register("MMM-TouchOverlay", {
 
 		const showMetadata = this.config.photoViewer?.showMetadata !== false;
 		const metadata = this.photoData.metadata;
-		const hasMetadata = showMetadata && metadata &&
-						   (metadata.date || metadata.album || metadata.filename);
+		const assetId = this.photoData.assetId;
 
 		let metadataHtml = "";
-		if (hasMetadata) {
-			metadataHtml = `
-				<div class="photo-metadata">
-					${metadata.date ? `<span class="photo-date">${metadata.date}</span>` : ""}
-					${metadata.album ? `<span class="photo-album">${metadata.album}</span>` : ""}
-					${metadata.filename ? `<span class="photo-filename">${metadata.filename}</span>` : ""}
+		if (showMetadata && metadata) {
+			metadataHtml = this._buildMetadataHtml(metadata);
+		}
+
+		// "..." actions menu button (only for Immich assets)
+		let moreButtonHtml = "";
+		if (assetId) {
+			moreButtonHtml = `
+				<button class="photo-more-btn" aria-label="Actions">&#8943;</button>
+				<div class="photo-actions-menu" style="display:none;">
+					<button class="photo-action-delete">
+						<span class="photo-action-icon">&#128465;</span>
+						Delete
+					</button>
 				</div>
 			`;
 		}
 
 		let mediaHtml;
 		if (this.photoData.isVideo && this.photoData.currentVideo) {
-			// Render video with audio controls
 			mediaHtml = `
 				<video
 					class="photo-viewer-video"
@@ -1019,7 +1088,6 @@ Module.register("MMM-TouchOverlay", {
 				></video>
 			`;
 		} else {
-			// Render image
 			mediaHtml = `
 				<img
 					class="photo-viewer-image"
@@ -1031,17 +1099,136 @@ Module.register("MMM-TouchOverlay", {
 
 		this.bodyElement.innerHTML = `
 			<div class="photo-viewer">
+				${moreButtonHtml}
 				${mediaHtml}
-				${metadataHtml}
+				<div class="photo-metadata-bar">${metadataHtml}</div>
 			</div>
 		`;
 
 		this.attachPhotoSwipeHandlers();
 
+		if (assetId) {
+			this.attachPhotoActionHandlers(assetId);
+		}
+
 		// Set data attribute on overlay for photo-specific styling
 		if (this.overlayElement) {
 			this.overlayElement.setAttribute("data-content", "photo");
 		}
+	},
+
+	_buildMetadataHtml: function (metadata) {
+		if (!metadata) return "";
+		const parts = [];
+		if (metadata.date) {
+			parts.push('<span class="photo-meta-pill photo-date">' + metadata.date + "</span>");
+		}
+		if (metadata.location) {
+			parts.push('<span class="photo-meta-pill photo-location">' + metadata.location + "</span>");
+		}
+		if (metadata.album) {
+			parts.push('<span class="photo-meta-pill photo-album">' + metadata.album + "</span>");
+		}
+		if (metadata.people && metadata.people.length > 0) {
+			parts.push('<span class="photo-meta-pill photo-people">' + metadata.people.join(", ") + "</span>");
+		}
+		if (parts.length === 0 && metadata.filename) {
+			parts.push('<span class="photo-meta-pill photo-filename">' + metadata.filename + "</span>");
+		}
+		return parts.join("");
+	},
+
+	_updateMetadataBar: function (metadata) {
+		const bar = this.bodyElement && this.bodyElement.querySelector(".photo-metadata-bar");
+		if (bar) {
+			bar.innerHTML = this._buildMetadataHtml(metadata);
+		}
+	},
+
+	attachPhotoActionHandlers: function (assetId) {
+		const self = this;
+		const moreBtn = this.bodyElement.querySelector(".photo-more-btn");
+		const menu = this.bodyElement.querySelector(".photo-actions-menu");
+		const deleteBtn = this.bodyElement.querySelector(".photo-action-delete");
+		if (!moreBtn || !menu) return;
+
+		moreBtn.addEventListener("click", function (e) {
+			e.stopPropagation();
+			var isVisible = menu.style.display !== "none";
+			menu.style.display = isVisible ? "none" : "block";
+		});
+
+		// Close menu on outside tap
+		this.bodyElement.addEventListener("click", function () {
+			if (menu.style.display !== "none") {
+				menu.style.display = "none";
+			}
+		});
+
+		if (deleteBtn) {
+			deleteBtn.addEventListener("click", function (e) {
+				e.stopPropagation();
+				menu.style.display = "none";
+				self.showDeleteConfirmation(assetId);
+			});
+		}
+	},
+
+	showDeleteConfirmation: function (assetId) {
+		const self = this;
+		const dialog = document.createElement("div");
+		dialog.className = "photo-delete-confirm";
+		dialog.innerHTML = `
+			<div class="photo-delete-confirm-card">
+				<div class="photo-delete-title">Delete this photo?</div>
+				<div class="photo-delete-subtitle">It will be moved to the Immich trash.</div>
+				<div class="photo-delete-actions">
+					<button class="photo-delete-cancel">Cancel</button>
+					<button class="photo-delete-confirm-btn">Delete</button>
+				</div>
+			</div>
+		`;
+		document.body.appendChild(dialog);
+
+		dialog.querySelector(".photo-delete-cancel").addEventListener("click", function () {
+			dialog.remove();
+		});
+
+		dialog.querySelector(".photo-delete-confirm-btn").addEventListener("click", function () {
+			self.executeDeletePhoto(assetId, dialog);
+		});
+	},
+
+	executeDeletePhoto: function (assetId, dialogElement) {
+		const self = this;
+		const card = dialogElement.querySelector(".photo-delete-confirm-card");
+		card.innerHTML = '<div class="photo-delete-spinner"></div><div class="photo-delete-status">Deleting...</div>';
+
+		fetch("/immichtilesslideshow-delete/" + assetId, { method: "DELETE" })
+			.then(function (res) {
+				if (!res.ok) throw new Error("Server returned " + res.status);
+				return res.json();
+			})
+			.then(function () {
+				card.innerHTML = '<div class="photo-delete-status photo-delete-success">Photo deleted</div>';
+				self.sendNotification("IMMICH_ASSET_DELETED", { assetId: assetId });
+				setTimeout(function () {
+					dialogElement.remove();
+					self.closeOverlay();
+				}, 600);
+			})
+			.catch(function (err) {
+				card.innerHTML = `
+					<div class="photo-delete-status photo-delete-error">Failed to delete photo</div>
+					<div class="photo-delete-subtitle">${err.message || "Unknown error"}</div>
+					<div class="photo-delete-actions">
+						<button class="photo-delete-dismiss">Dismiss</button>
+					</div>
+				`;
+				card.querySelector(".photo-delete-dismiss").addEventListener("click", function () {
+					dialogElement.remove();
+				});
+			});
 	},
 
 	attachPhotoSwipeHandlers: function () {
