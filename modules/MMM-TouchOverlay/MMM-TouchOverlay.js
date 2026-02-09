@@ -1237,43 +1237,124 @@ Module.register("MMM-TouchOverlay", {
 		});
 	},
 
-	navigatePhoto: function (direction) {
-		const allImages = document.querySelectorAll(".slideshow img, .photo img");
-		if (allImages.length === 0) return;
-
-		let currentIndex = -1;
-		for (let i = 0; i < allImages.length; i++) {
-			const src = allImages[i].src || allImages[i].dataset.src;
-			if (src === this.photoData.currentImage) {
-				currentIndex = i;
-				break;
+	_collectTileMedia: function () {
+		var tiles = document.querySelectorAll(".immich-tile");
+		var items = [];
+		for (var i = 0; i < tiles.length; i++) {
+			var tile = tiles[i];
+			var vidEl = tile.querySelector("video.immich-tile-video");
+			var imgEl = tile.querySelector(".immich-tile-img");
+			if (vidEl && vidEl.src) {
+				items.push({
+					isVideo: true,
+					videoUrl: vidEl.currentSrc || vidEl.src,
+					imageUrl: vidEl.poster || (imgEl ? this._extractBgUrl(imgEl) : null),
+					element: vidEl
+				});
+			} else if (imgEl) {
+				var bgUrl = this._extractBgUrl(imgEl);
+				if (bgUrl) {
+					items.push({ isVideo: false, imageUrl: bgUrl, element: imgEl });
+				}
 			}
 		}
+		return items;
+	},
 
+	_extractBgUrl: function (el) {
+		var bg = el.style.backgroundImage || "";
+		var m = bg.match(/url\(["']?(.*?)["']?\)/);
+		return m ? m[1] : null;
+	},
+
+	_findCurrentTileIndex: function (items) {
+		var currentAssetId = this.photoData.assetId;
+		var currentImage = this.photoData.currentImage;
+		var currentVideo = this.photoData.currentVideo;
+		for (var i = 0; i < items.length; i++) {
+			var item = items[i];
+			if (currentAssetId) {
+				var url = item.videoUrl || item.imageUrl || "";
+				if (url.indexOf(currentAssetId) !== -1) return i;
+			}
+			if (item.isVideo && currentVideo && item.videoUrl === currentVideo) return i;
+			if (!item.isVideo && currentImage) {
+				// Compare both thumbnail and preview variants
+				var thumbUrl = (item.imageUrl || "").replace("/immichtilesslideshow-preview/", "/immichtilesslideshow/");
+				var previewUrl = (item.imageUrl || "").replace("/immichtilesslideshow/", "/immichtilesslideshow-preview/");
+				if (currentImage === item.imageUrl || currentImage === previewUrl || currentImage === thumbUrl) return i;
+			}
+		}
+		return -1;
+	},
+
+	navigatePhoto: function (direction) {
+		var self = this;
+		var items = this._collectTileMedia();
+		if (items.length === 0) return;
+
+		var currentIndex = this._findCurrentTileIndex(items);
 		if (currentIndex === -1) return;
 
-		let newIndex = currentIndex + direction;
+		var newIndex;
 		if (direction === "left") {
 			newIndex = currentIndex + 1;
 		} else if (direction === "right") {
 			newIndex = currentIndex - 1;
+		} else {
+			newIndex = currentIndex + direction;
 		}
 
-		if (newIndex >= 0 && newIndex < allImages.length) {
-			const nextImgElement = allImages[newIndex];
-			const nextImageUrl = nextImgElement.src || nextImgElement.dataset.src;
+		// Wrap around
+		if (newIndex < 0) newIndex = items.length - 1;
+		if (newIndex >= items.length) newIndex = 0;
 
-			if (nextImageUrl) {
-				this.preloadImage(nextImageUrl)
-					.then(() => {
-						const metadata = this.extractPhotoMetadata(nextImgElement);
-						this.photoData.currentImage = nextImageUrl;
-						this.photoData.metadata = metadata;
-						this.renderPhotoViewer();
-					})
-					.catch((err) => {
-						Log.error("MMM-TouchOverlay: Failed to navigate to next photo:", err);
-					});
+		var next = items[newIndex];
+		if (!next) return;
+
+		var assetId = this.extractAssetIdFromUrl(next.videoUrl || next.imageUrl);
+
+		if (next.isVideo) {
+			this.photoData = {
+				currentImage: next.imageUrl,
+				currentVideo: next.videoUrl,
+				isVideo: true,
+				assetId: assetId,
+				metadata: null,
+				slideshowPaused: true
+			};
+			this.renderPhotoViewer();
+			if (assetId) {
+				this.fetchAssetMetadata(assetId).then(function (rich) {
+					if (rich && self.overlayState.isOpen && self.overlayState.contentType === "photo") {
+						self.photoData.metadata = rich;
+						self._updateMetadataBar(rich);
+					}
+				});
+			}
+		} else {
+			var previewUrl = this.convertToPreviewUrl(next.imageUrl);
+			this.photoData = {
+				currentImage: previewUrl,
+				isVideo: false,
+				assetId: assetId,
+				metadata: null,
+				slideshowPaused: true
+			};
+			this.preloadImage(previewUrl)
+				.then(function () {
+					self.renderPhotoViewer();
+				})
+				.catch(function () {
+					self.renderPhotoViewer();
+				});
+			if (assetId) {
+				this.fetchAssetMetadata(assetId).then(function (rich) {
+					if (rich && self.overlayState.isOpen && self.overlayState.contentType === "photo") {
+						self.photoData.metadata = rich;
+						self._updateMetadataBar(rich);
+					}
+				});
 			}
 		}
 	},
