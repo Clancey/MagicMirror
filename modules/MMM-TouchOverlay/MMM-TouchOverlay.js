@@ -1232,9 +1232,48 @@ Module.register("MMM-TouchOverlay", {
 	},
 
 	attachPhotoSwipeHandlers: function () {
-		this.attachSwipeHandlers(this.bodyElement, (direction) => {
-			this.navigatePhoto(direction);
-		});
+		var self = this;
+		var viewer = this.bodyElement.querySelector(".photo-viewer");
+		if (!viewer) return;
+
+		var startX = 0;
+		var startY = 0;
+		var tracking = false;
+		var swiped = false;
+		var minDistance = 50;
+
+		viewer.addEventListener("touchstart", function (e) {
+			var t = e.touches[0];
+			startX = t.clientX;
+			startY = t.clientY;
+			tracking = true;
+			swiped = false;
+		}, { passive: true });
+
+		viewer.addEventListener("touchmove", function (e) {
+			if (!tracking) return;
+			var t = e.touches[0];
+			var dx = Math.abs(t.clientX - startX);
+			var dy = Math.abs(t.clientY - startY);
+			// If horizontal movement dominates, prevent scroll and claim the gesture
+			if (dx > 15 && dx > dy) {
+				e.preventDefault();
+			}
+		}, { passive: false });
+
+		viewer.addEventListener("touchend", function (e) {
+			if (!tracking || swiped) return;
+			tracking = false;
+			var t = e.changedTouches[0];
+			var dx = t.clientX - startX;
+			if (Math.abs(dx) < minDistance) return;
+			swiped = true;
+			if (dx > 0) {
+				self.navigatePhoto("right");
+			} else {
+				self.navigatePhoto("left");
+			}
+		}, { passive: true });
 	},
 
 	_collectTileMedia: function () {
